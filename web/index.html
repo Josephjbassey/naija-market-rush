@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
   <title>Naija Market Rush</title>
-  <meta name="description" content="Run a stall in a busy Nigerian market. Serve shouting customers before they vex. 3D items made with Aholo Lux3D." />
+  <meta name="description" content="Run a stall in a busy Nigerian market. Serve shouting customers, haggle, upgrade your stall. 3D items made with Aholo Lux3D." />
   <link rel="stylesheet" href="/src/style.css" />
 </head>
 <body>
@@ -15,6 +15,7 @@
 
     <div id="hud" class="hidden">
       <div class="hud-left">
+        <div class="pill" id="hud-level">Mama Jo Stall</div>
         <div class="pill" id="hud-time">⏱ 75</div>
         <div class="pill cash" id="hud-cash">₦0</div>
       </div>
@@ -26,24 +27,70 @@
       </div>
     </div>
     <div id="toast" class="hidden"></div>
-    <div id="hint" class="hidden">👆 Tap the item wey customer ask for. Wrong item = −₦200!</div>
+    <div id="hint" class="hidden">👆 Tap the item wey customer ask for. Some customers go haggle. Wrong item = −₦200!</div>
 
     <div id="start" class="screen">
       <div class="card">
         <div class="kicker">A Lux3D market game</div>
         <h1>Naija Market <span>Rush</span></h1>
-        <p class="lead">Your stall, your hustle. Customers dey shout wetin dem want: <b>tap the right item</b> before their patience finish. Serve fast to build combo. Vex three people too many and the market go report you!</p>
+        <p class="lead">Your stall, your hustle. Customers dey shout wetin dem want: <b>tap the right item</b> before their patience finish. Some go <b>haggle</b>. Bank your naira, upgrade the stall, and unlock new markets.</p>
         <ul class="how">
           <li>👆 Tap an item on your table, it flies to whoever asked for it.</li>
           <li>🔥 Back-to-back correct serves = combo bonus. Quick serve = tip.</li>
-          <li>👑 Watch out for <b>Alhaji Big Spender</b>, he pays double.</li>
-          <li>✨ <b>Make your own item</b>: snap a photo or type a prompt, Aholo Lux3D turns it into a 3D item on your shelf. New items sell at a "fresh market" premium.</li>
+          <li>💬 When somebody wan haggle, lock the price in the green — too high and they waka.</li>
+          <li>👑 Watch out for big spenders. They pay double.</li>
+          <li>✨ <b>Make your own item</b> with Aholo Lux3D. Fresh items sell at a premium.</li>
         </ul>
         <div class="row">
-          <button class="btn primary" id="btn-start">Open my stall</button>
+          <button class="btn primary" id="btn-markets">Choose your market</button>
+          <button class="btn" id="btn-shop-start">Stall shop</button>
           <button class="btn" id="btn-make-start">✨ Make an item</button>
         </div>
         <p class="tiny" id="asset-status">Loading market…</p>
+        <p class="tiny" id="bank-status"></p>
+      </div>
+    </div>
+
+    <div id="levels" class="screen hidden">
+      <div class="card wide">
+        <button class="close" id="levels-close" aria-label="Close">✕</button>
+        <div class="kicker">Pick a market</div>
+        <h2>Where you wan sell today?</h2>
+        <p class="tiny" id="levels-bank"></p>
+        <div id="level-grid" class="level-grid"></div>
+        <div class="row">
+          <button class="btn" id="btn-shop-levels">Stall shop</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="shop" class="screen hidden">
+      <div class="card wide">
+        <button class="close" id="shop-close" aria-label="Close">✕</button>
+        <div class="kicker">Upgrade your stall</div>
+        <h2>Stall shop</h2>
+        <p class="lead">Spend naira you don bank from finished shifts. Upgrades stay saved on this device.</p>
+        <p class="shop-bank">Bank: <b id="shop-bank">₦0</b></p>
+        <div id="shop-list" class="shop-list"></div>
+        <p class="tiny err hidden" id="shop-err"></p>
+      </div>
+    </div>
+
+    <div id="haggle" class="screen hidden">
+      <div class="card haggle-card">
+        <div class="kicker">Haggle time</div>
+        <h2 id="haggle-title">Come down small!</h2>
+        <p class="lead" id="haggle-line">They want a better price. Tap <b>Lock am!</b> when the needle dey the green.</p>
+        <div id="haggle-item" class="tiny"></div>
+        <div id="haggle-bar" aria-hidden="true">
+          <div class="hz hz-low"></div>
+          <div class="hz hz-fair"></div>
+          <div class="hz hz-gold"></div>
+          <div class="hz hz-high"></div>
+          <div id="haggle-needle"></div>
+        </div>
+        <div class="haggle-legend"><span>Cheap</span><b id="haggle-price">₦0</b><span>Too costly</span></div>
+        <button class="btn primary" id="haggle-lock">Lock am!</button>
       </div>
     </div>
 
@@ -51,6 +98,7 @@
       <div class="card">
         <div class="kicker">Market don close</div>
         <h1 id="over-title">Iya Oloja!</h1>
+        <div class="stars" id="over-stars" aria-label="Stars earned">☆☆☆</div>
         <div class="stats">
           <div><b id="st-cash">₦0</b><span>Cash</span></div>
           <div><b id="st-served">0</b><span>Served</span></div>
@@ -58,8 +106,11 @@
           <div><b id="st-vexed">0</b><span>Vexed</span></div>
         </div>
         <p class="lead" id="over-line"></p>
+        <p class="tiny" id="over-bank"></p>
         <div class="row">
           <button class="btn primary" id="btn-again">Another shift</button>
+          <button class="btn" id="btn-over-markets">Markets</button>
+          <button class="btn" id="btn-shop-over">Stall shop</button>
           <button class="btn" id="btn-make-over">✨ Make an item</button>
         </div>
       </div>

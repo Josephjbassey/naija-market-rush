@@ -65,3 +65,36 @@ input[type=text],input[type=number],input[type=file]{display:block;width:100%;ma
 @media (max-width:640px){#hud{padding-left:6px;padding-right:6px}#hud>div{gap:4px}h1{font-size:34px}.pill{font-size:14px;padding:4px 10px;border-width:2px}.bubble{font-size:12px;max-width:140px;padding:5px 8px}.stats b{font-size:17px}}
 #hint{position:absolute;left:50%;bottom:max(18px,env(safe-area-inset-bottom));transform:translateX(-50%);background:rgba(255,248,231,.94);border:3px solid var(--ink);border-radius:14px;padding:8px 14px;font-weight:800;font-size:15px;text-align:center;width:min(92vw,520px);box-shadow:0 3px 0 var(--ink);pointer-events:none}
 @media (min-aspect-ratio:1/1){#hint{display:none}}
+
+#hud-level{max-width:42vw;overflow:hidden;text-overflow:ellipsis}
+.level-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0}
+.level-card{position:relative;background:#fff;border:3px solid var(--ink);border-radius:16px;padding:14px 12px 12px;text-align:left;box-shadow:0 4px 0 var(--ink);cursor:pointer;font-family:inherit;width:100%}
+.level-card:disabled,.level-card.locked{cursor:not-allowed;opacity:.85}
+.level-card h3{margin:4px 0 2px;font-size:20px}
+.level-card .sub{font-size:13px;opacity:.75;margin:0 0 8px}
+.level-card .stars{letter-spacing:2px;color:#c9a227;font-size:22px;margin:4px 0}
+.level-card .need{font-size:12px;font-weight:700;color:var(--g2)}
+.level-card.locked .need{color:#7a3b00}
+.level-card.night{background:#1f1a33;color:#f4efe8;border-color:#0c0a14;box-shadow:0 4px 0 #0c0a14}
+.level-card.night .sub{color:#d9d2c5;opacity:.9}
+.level-card.royal{background:linear-gradient(180deg,#fff6d8,#ffe7b0)}
+.stars{text-align:center;font-size:32px;letter-spacing:6px;color:#c9a227;margin:4px 0 8px}
+.shop-bank{font-size:18px;font-weight:800;margin:8px 0 12px}
+.shop-list{display:flex;flex-direction:column;gap:10px}
+.shop-row{display:flex;gap:10px;align-items:center;background:#fff;border:3px solid var(--ink);border-radius:14px;padding:10px 12px}
+.shop-row .grow{flex:1}
+.shop-row h3{margin:0 0 2px;font-size:18px}
+.shop-row p{margin:0;font-size:13px;opacity:.8}
+.haggle-card{max-width:440px;text-align:center}
+#haggle-bar{position:relative;height:28px;border:3px solid var(--ink);border-radius:14px;overflow:hidden;display:flex;margin:14px 0 8px;background:#eee}
+#haggle-bar .hz{height:100%}
+.hz-low{flex:0 0 35%;background:#f3d37a}
+.hz-fair{flex:0 0 27%;background:#3cb371}
+.hz-gold{flex:0 0 16%;background:#ffd23f}
+.hz-high{flex:1;background:#e63946}
+#haggle-needle{position:absolute;top:-4px;bottom:-4px;width:5px;background:var(--ink);border-radius:3px;left:0;transform:translateX(-50%);box-shadow:0 0 0 2px #fff}
+.haggle-legend{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:700;margin-bottom:10px}
+#haggle-price{font-size:22px}
+@media (max-width:720px){.level-grid{grid-template-columns:1fr}#hud-level{display:none}.shop-row{flex-wrap:wrap}}
+
+.bubble.haggle{background:#eef6ff}

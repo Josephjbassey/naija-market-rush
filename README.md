@@ -1,20 +1,24 @@
 # Naija Market Rush
 
-A funny browser game set in a busy Nigerian market. You run a stall. Customers shout what they want ("Abeg, bring me yam!", "Where's my agbada?!") and you tap the right item before their patience runs out. Snap a photo or type a prompt, and **Aholo Lux3D** turns it into a 3D item that lands on your shelf, ready to sell.
+A funny browser game set in a busy Nigerian market. You run a stall. Customers shout what they want ("Abeg, bring me yam!", "Where's my agbada?!") and you tap the right item before their patience runs out. Some will **haggle**. Bank your naira, upgrade the stall, and unlock two more markets: **Oja Oba** (Akure king's market) and a lantern-lit **Night Market**. Snap a photo or type a prompt, and **Aholo Lux3D** turns it into a 3D item that lands on your shelf, ready to sell.
 
-Entry for the **Manycore Aholo Global 3D AI Hackathon** (Gaming).
+Entry for the **Manycore Aholo Global 3D AI Hackathon** (Gaming). Deadline 19 Nov 2026.
 
-![Gameplay](docs/screenshots/03-serving.png)
+![Gameplay](docs/screenshots/20-ojaoba-gameplay.png)
 
 ## Status (be honest about what is real)
 
 | Part | Status |
 |---|---|
-| Playable game (Three.js, 75 s shift, combo, tips, VIP customer, reputation, rush hour, mobile tap controls, synth sounds) | ✅ Built and smoke-tested headless |
-| Item pipeline: `web/public/assets/manifest.json` + `*.glb` files | ✅ Built. **All 12 shelf items are real Aholo Lux3D text-to-3D GLBs** (G1-Turbo, cartoon, target 30k faces), compressed with gltf-transform (Draco + WebP 1024px) under `web/public/assets/models/`. See `docs/lux3d_generation_log.json`. |
+| Playable game (Three.js, three markets, haggling mini-game, stall upgrades, combo, tips, VIP + per-level customer types, reputation, rush hour, mobile tap controls, procedural afrobeat-ish music + SFX, mute saved) | ✅ Built and smoke-tested headless |
+| Three markets with level select (unlocks by stars) | ✅ Mama Jo Stall (always open), Oja Oba (1 star on stall), Night Market (1 star on Oja Oba, faster customers, lantern lighting) |
+| Haggling mini-game | ✅ Some customers open a timing-bar; too high and they walk, a gold-zone deal earns a bonus |
+| Stall shop (localStorage `nmr-save-v1`) | ✅ Faster hands, bigger shelf (14 slots), apprentice auto-serve, finer canopy — paid with banked naira |
+| Item pipeline: `web/public/assets/manifest.json` + `*.glb` files | ✅ Built. **All 36 shelf items (12 per market) are real Aholo Lux3D text-to-3D GLBs** (G1-Turbo, cartoon, target 30k faces), compressed with gltf-transform (Draco + WebP 1024px) under `web/public/assets/models/`. See `docs/lux3d_generation_log.json` and `docs/LUX3D_ASSETS.md`. |
 | "Make an item" → Lux3D API (photo → image-to-3D, prompt → text-to-3D) via `server/app.py` | ✅ Tested against the live Global API (not mock). In-game generation of a "Tomato basket" from a text prompt succeeded in 168.4 s and loaded on the shelf (task 8012442). |
 | "Import a Lux3D .glb" (drag a GLB exported from the Lux3D web app) | ✅ Works on any static host, tested with a sample GLB |
-| Market scenery from Lux3D (`scenery` in manifest) | ✅ Loader ready; procedural neighbour stalls are shown until GLBs exist |
+| Sound | ✅ Procedural WebAudio SFX + 100 BPM afrobeat-ish loop, no third-party samples. Sources and licence: `docs/AUDIO_CREDITS.md` (CC0 1.0). Mute toggle persisted. |
+| Market scenery from Lux3D (`scenery` in manifest) | ✅ Loader ready; procedural neighbour stalls (and night lanterns / palace silhouette) are shown until GLBs exist |
 
 ## Run it
 
@@ -33,7 +37,7 @@ python server/app.py            # http://localhost:8000  (serves web/dist + /api
 
 During `npm run dev`, Vite proxies `/api` to `localhost:8000`. If the frontend is hosted separately (e.g. Vercel), build it with `VITE_API_BASE=https://your-backend` and set `CORS_ORIGINS` on the server.
 
-Tests: `python tests/smoke.py http://localhost:4173 docs/screenshots path/to/any.glb` (after `npm run build && npx vite preview`) and `LUX3D_MOCK=1 python server/app.py` + `python tests/mock_make.py http://localhost:8000`.
+Tests: `python tests/smoke.py http://localhost:4173 docs/screenshots path/to/any.glb` and `python tools/nmr_expand_test.py http://localhost:4173 docs/screenshots` (after `npm run build && npx vite preview`) and `LUX3D_MOCK=1 python server/app.py` + `python tests/mock_make.py http://localhost:8000`.
 
 ## Add Lux3D assets
 
@@ -43,20 +47,22 @@ Tests: `python tests/smoke.py http://localhost:4173 docs/screenshots path/to/any
 4. Scenery props go in `web/public/assets/env/` (names in the `scenery` list). Each one found hides a procedural neighbour stall.
 5. Reload. The start screen reports how many items are real Lux3D models vs placeholders.
 
-To add a brand new item, add an entry to `items` in `manifest.json` (`id`, `name`, `price` in naira, `glb`, `requests` lines). The shelf holds 12; extras made in-game replace the oldest slot.
+To add a brand new item, add an entry under the right market in `levels` in `manifest.json` (`id`, `name`, `price` in naira, `glb`, `requests` lines). The shelf holds 12 items, or 14 with the bigger-shelf upgrade; extras made in-game replace the oldest slot.
 
 ## Architecture
 
 ```
 web/  (Vite + Three.js, static build)
-  src/main.js         game loop, customers, serving, scoring, input (raycast + generous tap fallback)
-  src/world.js        low-poly market: stall, tiered table, neighbours, buildings, bunting, crowd
+  src/main.js         game loop, serving, haggling, shop, level select, scoring, input
+  src/levels.js       three markets: pacing, unlocks, star thresholds, customer types
+  src/progress.js     localStorage bank, stars, upgrades, mute
+  src/world.js        day / royal / night themes, stall, lanterns, canopy upgrade, crowd
   src/items.js        manifest loader, GLTFLoader (+Draco), auto-normalise, placeholder fallback
-  src/placeholders.js procedural PLACEHOLDER meshes (12 items + generic)
-  src/customers.js    procedural customers (gele / fila / Alhaji VIP), moods
+  src/placeholders.js procedural PLACEHOLDER meshes (until a GLB exists)
+  src/customers.js    per-level types (chief, geleQueen, okada, hawker, nightowl, …)
   src/maker.js        "Make an item": Lux3D generate (backend) or GLB import
-  src/audio.js        WebAudio synth sfx + talking-drum loop (no audio files)
-  public/assets/      manifest.json + Lux3D GLBs
+  src/audio.js        procedural WebAudio SFX + afrobeat-ish loop (no audio files)
+  public/assets/      manifest.json + 36 Lux3D GLBs
 server/app.py         FastAPI: /api/make -> Lux3D create (official SDK, Global region "com"),
                       /api/task/{id} -> poll + download GLB (cached; output URLs expire ~2 h),
                       /api/glb/{id}, serves web/dist. Rate limit (MAX_GENERATIONS_PER_HOUR).

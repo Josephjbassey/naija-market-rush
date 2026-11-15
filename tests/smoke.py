@@ -19,14 +19,15 @@ async def main():
         await pg.wait_for_function("window.__nmr && window.__nmr.catalog.length >= 12", timeout=30000)
         print('asset status:', await pg.inner_text('#asset-status'))
         await pg.screenshot(path=f'{OUT}/01-start.png')
-        await pg.click('#btn-start')
+        await pg.click('#btn-markets')
+        await pg.click('[data-level=stall]')
         await pg.wait_for_timeout(5500)
         await pg.screenshot(path=f'{OUT}/02-customers.png')
         served = 0
         for _ in range(40):
             if served >= 5: break
-            res = await pg.evaluate("""() => { const n = window.__nmr; const c = n.customers.find(c => c.state === 'wait');
-                if (!c) return null; const i = n.shelf.findIndex(s => s && s.item.id === c.item.id); n.serve(i); return c.item.name; }""")
+            res = await pg.evaluate("""() => { const n = window.__nmr; const c = n.customers.find(c => c.state === 'wait' && (!c.haggle || c.haggled));
+                if (!c) return null; const i = n.shelf.findIndex(s => s && s.item.id === c.item.id); if (i < 0) return null; n.serve(i); return c.item.name; }""")
             if res: served += 1
             await pg.wait_for_timeout(700)
             if served == 3: await pg.screenshot(path=f'{OUT}/03-serving.png')
@@ -55,7 +56,7 @@ async def main():
         m.on('pageerror', lambda e: errors.append(str(e)))
         await m.goto(URL, wait_until='networkidle')
         await m.wait_for_function("window.__nmr && window.__nmr.catalog.length >= 12", timeout=30000)
-        await m.tap('#btn-start'); await m.wait_for_timeout(5000)
+        await m.tap('#btn-markets'); await m.wait_for_timeout(400); await m.tap('[data-level=stall]'); await m.wait_for_timeout(5000)
         await m.screenshot(path=f'{OUT}/07-mobile.png')
         await b.close()
     real = [e for e in errors if 'favicon' not in e]
