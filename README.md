@@ -11,8 +11,8 @@ Entry for the **Manycore Aholo Global 3D AI Hackathon** (Gaming).
 | Part | Status |
 |---|---|
 | Playable game (Three.js, 75 s shift, combo, tips, VIP customer, reputation, rush hour, mobile tap controls, synth sounds) | ✅ Built and smoke-tested headless |
-| Item pipeline: `web/public/assets/manifest.json` + `*.glb` files | ✅ Built. **All 12 items currently use procedural PLACEHOLDER meshes** (labelled "placeholder" in game) until the Lux3D GLBs are added |
-| "Make an item" → Lux3D API (photo → image-to-3D, prompt → text-to-3D) via `server/app.py` | ✅ Code complete, tested end-to-end in **mock mode**. The SDK call reaches the real Global API (it returned `invalid appKey` with a dummy key). **Not yet run with a real `AHOLO_API_KEY`** |
+| Item pipeline: `web/public/assets/manifest.json` + `*.glb` files | ✅ Built. **All 12 shelf items are real Aholo Lux3D text-to-3D GLBs** (G1-Turbo, cartoon, target 30k faces), compressed with gltf-transform (Draco + WebP 1024px) under `web/public/assets/models/`. See `docs/lux3d_generation_log.json`. |
+| "Make an item" → Lux3D API (photo → image-to-3D, prompt → text-to-3D) via `server/app.py` | ✅ Tested against the live Global API (not mock). In-game generation of a "Tomato basket" from a text prompt succeeded in 168.4 s and loaded on the shelf (task 8012442). |
 | "Import a Lux3D .glb" (drag a GLB exported from the Lux3D web app) | ✅ Works on any static host, tested with a sample GLB |
 | Market scenery from Lux3D (`scenery` in manifest) | ✅ Loader ready; procedural neighbour stalls are shown until GLBs exist |
 
@@ -39,7 +39,7 @@ Tests: `python tests/smoke.py http://localhost:4173 docs/screenshots path/to/any
 
 1. Generate each item in Lux3D (web app at https://3d.aholo.ai, or the API). Prompts and photo tips: [docs/LUX3D_ASSETS.md](docs/LUX3D_ASSETS.md).
 2. Download the **GLB**. Keep it light for the browser: aim for 20k–50k faces, under ~8 MB.
-3. Save it as `web/public/assets/<filename from manifest.json>` (e.g. `yam.glb`). The game auto-scales and centres it; the "placeholder" tag disappears from that item's label.
+3. Save it as `web/public/assets/models/<filename from manifest.json>` (e.g. `models/yam.glb`). The game auto-scales and centres it; the "placeholder" tag disappears from that item's label.
 4. Scenery props go in `web/public/assets/env/` (names in the `scenery` list). Each one found hides a procedural neighbour stall.
 5. Reload. The start screen reports how many items are real Lux3D models vs placeholders.
 

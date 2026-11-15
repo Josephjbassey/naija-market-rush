@@ -1,37 +1,214 @@
 {
   "version": 1,
-  "note": "Each item loads /assets/<glb> if the file exists. If it is missing, the game draws a simple procedural PLACEHOLDER mesh (key = placeholder). Replace placeholders by dropping Lux3D-generated GLBs into web/public/assets/ with the same filename.",
+  "note": "Each item loads /assets/<glb>. The 12 shelf items are real Aholo Lux3D text-to-3D GLBs (G1-Turbo, cartoon, target 30k faces), compressed with gltf-transform (Draco + WebP textures at 1024px) so the web build stays light. If a file is missing, the game draws a procedural PLACEHOLDER mesh.",
   "items": [
-    { "id": "yam", "name": "Yam tuber", "price": 2500, "glb": "yam.glb", "placeholder": "yam",
-      "requests": ["Abeg, bring me yam!", "Fine yam dey? I wan pound!", "One tuber of yam, quick quick!"] },
-    { "id": "agbada", "name": "Agbada", "price": 18000, "glb": "agbada.glb", "placeholder": "agbada",
-      "requests": ["Where's my agbada?!", "Owambe dey Saturday, give me agbada!", "Agbada! The big one!"] },
-    { "id": "gele", "name": "Gele", "price": 7000, "glb": "gele.glb", "placeholder": "gele",
-      "requests": ["My gele must shine pass my rival own!", "Give me that gele, sharp sharp!", "Gele abeg, the party don start!"] },
-    { "id": "jollof", "name": "Pot of jollof", "price": 9000, "glb": "jollof_pot.glb", "placeholder": "jollof",
-      "requests": ["Jollof! Party jollof!", "Abeg, give me jollof wey get smoky taste!", "Na jollof I come buy o!"] },
-    { "id": "plantain", "name": "Plantain bunch", "price": 3500, "glb": "plantain.glb", "placeholder": "plantain",
-      "requests": ["Plantain, the ripe one!", "Dodo time! Bring plantain!", "One bunch of plantain please!"] },
-    { "id": "palmoil", "name": "Palm oil keg", "price": 6000, "glb": "palm_oil_keg.glb", "placeholder": "palmoil",
-      "requests": ["Palm oil, make my soup red!", "Bring keg of palm oil, abeg!", "Red oil! Quick!"] },
-    { "id": "ankara", "name": "Ankara roll", "price": 12000, "glb": "ankara_roll.glb", "placeholder": "ankara",
-      "requests": ["Ankara! Six yards!", "I need ankara for aso-ebi!", "Show me your best ankara!"] },
-    { "id": "phone", "name": "Torchlight phone", "price": 8500, "glb": "torch_phone.glb", "placeholder": "phone",
-      "requests": ["Small phone wey get torchlight!", "Battery wey go last one week, bring am!", "That ‘unbreakable’ phone, abeg!"] },
-    { "id": "lantern", "name": "Kerosene lantern", "price": 4000, "glb": "lantern.glb", "placeholder": "lantern",
-      "requests": ["NEPA don take light! Lantern!", "Bring lantern before night reach!", "Lantern, the bright one!"] },
-    { "id": "danfo", "name": "Danfo toy bus", "price": 3000, "glb": "danfo_toy.glb", "placeholder": "danfo",
-      "requests": ["Danfo toy for my pikin!", "Oshodi! Oshodi! I mean... the toy bus!", "Yellow bus toy, abeg!"] },
-    { "id": "egusi", "name": "Basin of egusi", "price": 5500, "glb": "egusi_basin.glb", "placeholder": "egusi",
-      "requests": ["Egusi! I wan cook soup!", "Give me one basin of egusi!", "Na egusi I dey find!"] },
-    { "id": "suya", "name": "Suya tray", "price": 4500, "glb": "suya_tray.glb", "placeholder": "suya",
-      "requests": ["Suya! Plenty pepper!", "One tray of suya, extra onions!", "Mallam say make I buy suya here!"] }
+    {
+      "id": "yam",
+      "name": "Yam tuber",
+      "price": 2500,
+      "glb": "models/yam.glb",
+      "placeholder": "yam",
+      "requests": [
+        "Abeg, bring me yam!",
+        "Fine yam dey? I wan pound!",
+        "One tuber of yam, quick quick!"
+      ]
+    },
+    {
+      "id": "agbada",
+      "name": "Agbada",
+      "price": 18000,
+      "glb": "models/agbada.glb",
+      "placeholder": "agbada",
+      "requests": [
+        "Where's my agbada?!",
+        "Owambe dey Saturday, give me agbada!",
+        "Agbada! The big one!"
+      ]
+    },
+    {
+      "id": "gele",
+      "name": "Gele",
+      "price": 7000,
+      "glb": "models/gele.glb",
+      "placeholder": "gele",
+      "requests": [
+        "My gele must shine pass my rival own!",
+        "Give me that gele, sharp sharp!",
+        "Gele abeg, the party don start!"
+      ]
+    },
+    {
+      "id": "jollof",
+      "name": "Pot of jollof",
+      "price": 9000,
+      "glb": "models/jollof_pot.glb",
+      "placeholder": "jollof",
+      "requests": [
+        "Jollof! Party jollof!",
+        "Abeg, give me jollof wey get smoky taste!",
+        "Na jollof I come buy o!"
+      ]
+    },
+    {
+      "id": "plantain",
+      "name": "Plantain bunch",
+      "price": 3500,
+      "glb": "models/plantain.glb",
+      "placeholder": "plantain",
+      "requests": [
+        "Plantain, the ripe one!",
+        "Dodo time! Bring plantain!",
+        "One bunch of plantain please!"
+      ]
+    },
+    {
+      "id": "palmoil",
+      "name": "Palm oil keg",
+      "price": 6000,
+      "glb": "models/palm_oil_keg.glb",
+      "placeholder": "palmoil",
+      "requests": [
+        "Palm oil, make my soup red!",
+        "Bring keg of palm oil, abeg!",
+        "Red oil! Quick!"
+      ]
+    },
+    {
+      "id": "ankara",
+      "name": "Ankara roll",
+      "price": 12000,
+      "glb": "models/ankara_roll.glb",
+      "placeholder": "ankara",
+      "requests": [
+        "Ankara! Six yards!",
+        "I need ankara for aso-ebi!",
+        "Show me your best ankara!"
+      ]
+    },
+    {
+      "id": "phone",
+      "name": "Torchlight phone",
+      "price": 8500,
+      "glb": "models/torch_phone.glb",
+      "placeholder": "phone",
+      "requests": [
+        "Small phone wey get torchlight!",
+        "Battery wey go last one week, bring am!",
+        "That \u2018unbreakable\u2019 phone, abeg!"
+      ]
+    },
+    {
+      "id": "lantern",
+      "name": "Kerosene lantern",
+      "price": 4000,
+      "glb": "models/lantern.glb",
+      "placeholder": "lantern",
+      "requests": [
+        "NEPA don take light! Lantern!",
+        "Bring lantern before night reach!",
+        "Lantern, the bright one!"
+      ]
+    },
+    {
+      "id": "danfo",
+      "name": "Danfo toy bus",
+      "price": 3000,
+      "glb": "models/danfo_toy.glb",
+      "placeholder": "danfo",
+      "requests": [
+        "Danfo toy for my pikin!",
+        "Oshodi! Oshodi! I mean... the toy bus!",
+        "Yellow bus toy, abeg!"
+      ]
+    },
+    {
+      "id": "egusi",
+      "name": "Basin of egusi",
+      "price": 5500,
+      "glb": "models/egusi_basin.glb",
+      "placeholder": "egusi",
+      "requests": [
+        "Egusi! I wan cook soup!",
+        "Give me one basin of egusi!",
+        "Na egusi I dey find!"
+      ]
+    },
+    {
+      "id": "suya",
+      "name": "Suya tray",
+      "price": 4500,
+      "glb": "models/suya_tray.glb",
+      "placeholder": "suya",
+      "requests": [
+        "Suya! Plenty pepper!",
+        "One tray of suya, extra onions!",
+        "Mallam say make I buy suya here!"
+      ]
+    }
   ],
   "scenery": [
-    { "id": "stall_left", "glb": "env/stall_umbrella.glb", "position": [-7.5, 0, -4], "rotationY": 0.4, "height": 3.2 },
-    { "id": "stall_right", "glb": "env/stall_umbrella.glb", "position": [7.5, 0, -4], "rotationY": -0.4, "height": 3.2 },
-    { "id": "danfo_bus", "glb": "env/danfo_bus.glb", "position": [9, 0, -11], "rotationY": -1.2, "height": 2.6 },
-    { "id": "fabric_rack", "glb": "env/fabric_rack.glb", "position": [-11, 0, -8], "rotationY": 0.9, "height": 2.4 },
-    { "id": "mama_put", "glb": "env/mama_put_stand.glb", "position": [-4, 0, -12], "rotationY": 0.1, "height": 2.4 }
-  ]
+    {
+      "id": "stall_left",
+      "glb": "env/stall_umbrella.glb",
+      "position": [
+        -7.5,
+        0,
+        -4
+      ],
+      "rotationY": 0.4,
+      "height": 3.2
+    },
+    {
+      "id": "stall_right",
+      "glb": "env/stall_umbrella.glb",
+      "position": [
+        7.5,
+        0,
+        -4
+      ],
+      "rotationY": -0.4,
+      "height": 3.2
+    },
+    {
+      "id": "danfo_bus",
+      "glb": "env/danfo_bus.glb",
+      "position": [
+        9,
+        0,
+        -11
+      ],
+      "rotationY": -1.2,
+      "height": 2.6
+    },
+    {
+      "id": "fabric_rack",
+      "glb": "env/fabric_rack.glb",
+      "position": [
+        -11,
+        0,
+        -8
+      ],
+      "rotationY": 0.9,
+      "height": 2.4
+    },
+    {
+      "id": "mama_put",
+      "glb": "env/mama_put_stand.glb",
+      "position": [
+        -4,
+        0,
+        -12
+      ],
+      "rotationY": 0.1,
+      "height": 2.4
+    }
+  ],
+  "lux3d": {
+    "method": "text-to-3d",
+    "version": "G1-Turbo",
+    "style": "cartoon",
+    "face_count": 30000,
+    "compressed_with": "gltf-transform 4.5.1 optimize --compress draco --texture-compress webp --texture-size 1024"
+  }
 }
