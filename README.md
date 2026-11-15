@@ -24,6 +24,10 @@ Entry for the **Manycore Aholo Global 3D AI Hackathon** (Gaming). Deadline 19 No
 
 Public demo (static Vite build on Vercel): **https://naija-market-rush.vercel.app**
 
+Video demo: **https://youtu.be/vcnjE9VIMbM**
+
+X (Twitter) post: **https://x.com/JosephJBassey/status/2122005022258942365**
+
 Source: **https://github.com/Josephjbassey/naija-market-rush**
 
 The public host serves the 36 shipped catalog GLBs. Live in-game Lux3D generation is **not** enabled there: the `AHOLO_API_KEY` is not in the frontend or in the public deploy. When the FastAPI backend is absent, the Generate control is hidden and the UI shows “Live generation available in local/server build.” Importing a GLB still works. To generate live, run the local backend below.

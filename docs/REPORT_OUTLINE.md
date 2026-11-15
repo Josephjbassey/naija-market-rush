@@ -4,7 +4,7 @@
 ## 1. Title slide
 - Naija Market Rush · a Lux3D-powered market game
 - Joseph Bassey John (solo) · Akure, Nigeria · Gaming Application Award
-- Demo link: [PLACEHOLDER URL] · Video: [PLACEHOLDER URL] · Code: [PLACEHOLDER GitHub URL]
+- Demo link: https://naija-market-rush.vercel.app · Video: https://youtu.be/vcnjE9VIMbM · Code: https://github.com/Josephjbassey/naija-market-rush · X post: https://x.com/JosephJBassey/status/2122005022258942365
 
 ## 2. Concept (1 slide)
 - Hook: Nigerian markets are loud, fast and funny. You run a stall and race to serve shouting customers.
