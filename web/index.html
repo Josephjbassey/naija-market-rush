@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Naija Market Rush</title>
+  <meta name="description" content="Run a stall in a busy Nigerian market. Serve shouting customers before they vex. 3D items made with Aholo Lux3D." />
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <div id="app">
+    <canvas id="scene"></canvas>
+    <div id="bubbles"></div>
+    <div id="floaters"></div>
+
+    <div id="hud" class="hidden">
+      <div class="hud-left">
+        <div class="pill" id="hud-time">⏱ 75</div>
+        <div class="pill cash" id="hud-cash">₦0</div>
+      </div>
+      <div class="hud-center"><div class="pill combo" id="hud-combo">Combo x0</div></div>
+      <div class="hud-right">
+        <div class="pill" id="hud-rep">❤❤❤❤❤</div>
+        <button class="pill btn-small" id="btn-make-hud" title="Make a new item">＋ Item</button>
+        <button class="pill btn-small" id="btn-mute" title="Sound">🔊</button>
+      </div>
+    </div>
+    <div id="toast" class="hidden"></div>
+    <div id="hint" class="hidden">👆 Tap the item wey customer ask for. Wrong item = −₦200!</div>
+
+    <div id="start" class="screen">
+      <div class="card">
+        <div class="kicker">A Lux3D market game</div>
+        <h1>Naija Market <span>Rush</span></h1>
+        <p class="lead">Your stall, your hustle. Customers dey shout wetin dem want: <b>tap the right item</b> before their patience finish. Serve fast to build combo. Vex three people too many and the market go report you!</p>
+        <ul class="how">
+          <li>👆 Tap an item on your table, it flies to whoever asked for it.</li>
+          <li>🔥 Back-to-back correct serves = combo bonus. Quick serve = tip.</li>
+          <li>👑 Watch out for <b>Alhaji Big Spender</b>, he pays double.</li>
+          <li>✨ <b>Make your own item</b>: snap a photo or type a prompt, Aholo Lux3D turns it into a 3D item on your shelf. New items sell at a "fresh market" premium.</li>
+        </ul>
+        <div class="row">
+          <button class="btn primary" id="btn-start">Open my stall</button>
+          <button class="btn" id="btn-make-start">✨ Make an item</button>
+        </div>
+        <p class="tiny" id="asset-status">Loading market…</p>
+      </div>
+    </div>
+
+    <div id="over" class="screen hidden">
+      <div class="card">
+        <div class="kicker">Market don close</div>
+        <h1 id="over-title">Iya Oloja!</h1>
+        <div class="stats">
+          <div><b id="st-cash">₦0</b><span>Cash</span></div>
+          <div><b id="st-served">0</b><span>Served</span></div>
+          <div><b id="st-combo">0</b><span>Best combo</span></div>
+          <div><b id="st-vexed">0</b><span>Vexed</span></div>
+        </div>
+        <p class="lead" id="over-line"></p>
+        <div class="row">
+          <button class="btn primary" id="btn-again">Another shift</button>
+          <button class="btn" id="btn-make-over">✨ Make an item</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="maker" class="screen hidden">
+      <div class="card wide">
+        <button class="close" id="maker-close" aria-label="Close">✕</button>
+        <div class="kicker">Stock your shelf</div>
+        <h2>Make a new item</h2>
+        <div class="tabs">
+          <button class="tab active" data-tab="lux">Generate with Lux3D</button>
+          <button class="tab" data-tab="import">Import a Lux3D .glb</button>
+        </div>
+        <div class="tabpane" id="tab-lux">
+          <p class="tiny" id="lux-status">Checking Lux3D backend…</p>
+          <label>Photo of a real item (optional)<input type="file" id="lux-photo" accept="image/*" capture="environment" /></label>
+          <label>…or describe it<input type="text" id="lux-prompt" maxlength="300" placeholder="e.g. a woven raffia basket full of red tomatoes" /></label>
+          <div class="row2">
+            <label>Item name<input type="text" id="lux-name" maxlength="28" placeholder="Tomato basket" /></label>
+            <label>Price (₦)<input type="number" id="lux-price" min="100" max="100000" step="100" value="5000" /></label>
+          </div>
+          <label>What customers shout<input type="text" id="lux-line" maxlength="60" placeholder="Abeg, bring tomato basket!" /></label>
+          <button class="btn primary" id="lux-go">✨ Generate 3D item</button>
+          <div class="progress hidden" id="lux-progress"><div class="spinner"></div><span id="lux-progress-text">Lux3D dey mould am…</span></div>
+        </div>
+        <div class="tabpane hidden" id="tab-import">
+          <p class="tiny">Made an item in the <a href="https://3d.aholo.ai" target="_blank" rel="noopener">Aholo Lux3D web app</a>? Download the GLB and drop it here.</p>
+          <div id="drop" class="drop">Drop a .glb here or <u>browse</u><input type="file" id="imp-file" accept=".glb,model/gltf-binary" /></div>
+          <div class="row2">
+            <label>Item name<input type="text" id="imp-name" maxlength="28" placeholder="Talking drum" /></label>
+            <label>Price (₦)<input type="number" id="imp-price" min="100" max="100000" step="100" value="5000" /></label>
+          </div>
+          <label>What customers shout<input type="text" id="imp-line" maxlength="60" placeholder="Bring that talking drum!" /></label>
+          <button class="btn primary" id="imp-go" disabled>Add to my shelf</button>
+        </div>
+        <p class="tiny err hidden" id="maker-err"></p>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

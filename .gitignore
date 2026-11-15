@@ -1,0 +1,11 @@
+node_modules/
+web/dist/
+build/
+.venv/
+__pycache__/
+server/generated/
+.env
+.env.*
+*.log
+.DS_Store
+!.env.example
