@@ -20,6 +20,14 @@ Entry for the **Manycore Aholo Global 3D AI Hackathon** (Gaming). Deadline 19 No
 | Sound | ✅ Procedural WebAudio SFX + 100 BPM afrobeat-ish loop, no third-party samples. Sources and licence: `docs/AUDIO_CREDITS.md` (CC0 1.0). Mute toggle persisted. |
 | Market scenery from Lux3D (`scenery` in manifest) | ✅ Loader ready; procedural neighbour stalls (and night lanterns / palace silhouette) are shown until GLBs exist |
 
+## Play it
+
+Public demo (static Vite build on Vercel): **https://naija-market-rush.vercel.app**
+
+Source: **https://github.com/Josephjbassey/naija-market-rush**
+
+The public host serves the 36 shipped catalog GLBs. Live in-game Lux3D generation is **not** enabled there: the `AHOLO_API_KEY` is not in the frontend or in the public deploy. When the FastAPI backend is absent, the Generate control is hidden and the UI shows “Live generation available in local/server build.” Importing a GLB still works. To generate live, run the local backend below.
+
 ## Run it
 
 ```bash
@@ -74,7 +82,7 @@ Lux3D API used: `POST https://api.aholo.ai/global/lux3d/v1/generate/img-to-3d/ta
 
 ## Hosting
 
-- **Vercel (static, simplest):** project root `web`, framework Vite, build `npm run build`, output `dist`. "Import a Lux3D .glb" works; "Generate with Lux3D" shows as offline unless you also host the backend.
+- **Vercel (static, public demo live):** https://naija-market-rush.vercel.app — project root `web`, framework Vite, build `npm run build`, output `dist`. Team `josephjbasseys-projects`. Only the project alias is public; unique deployment URLs use Vercel Authentication. "Import a Lux3D .glb" works; "Generate with Lux3D" is hidden on this host (no backend, no API key).
 - **ModelScope Studio (recommended by the organisers):** run `scripts/build_modelscope.sh`, create a **Gradio** Studio on modelscope.ai, push `build/modelscope/`, add `AHOLO_API_KEY` as a Studio secret. Or a **Static** Studio with just `build/modelscope/dist/`. (The ModelScope deploy itself has not been tested yet.)
 
 ## Credits & tools

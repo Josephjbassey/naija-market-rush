@@ -11,16 +11,29 @@ export function initMaker({ onOpen, onClose, onItem, buttons }) {
   let backendOk = false, importBuf = null, busy = false;
   const err = (m) => { const e = $('maker-err'); e.textContent = m || ''; e.classList.toggle('hidden', !m); };
 
+  function setGenerateAvailable(on) {
+    backendOk = on;
+    $('lux-go').disabled = !on;
+    const fields = $('lux-fields');
+    if (fields) fields.classList.toggle('hidden', !on);
+  }
+
   async function checkBackend() {
     const st = $('lux-status');
     try {
       const r = await fetch(`${API}/api/health`, { cache: 'no-store' });
       const j = r.ok ? await r.json() : null;
-      if (j && j.lux3d) { backendOk = true; st.textContent = j.mock ? '🧪 Backend in MOCK mode (no real Lux3D calls).' : '🟢 Lux3D backend connected. Generation takes a few minutes.'; }
-      else if (j) { st.textContent = '🟡 Backend is up but AHOLO_API_KEY is not set. Use "Import a Lux3D .glb" instead.'; }
-      else throw new Error();
-    } catch { st.textContent = '⚪ No Lux3D backend on this host (static demo). Use "Import a Lux3D .glb" with a model from the Lux3D web app.'; }
-    $('lux-go').disabled = !backendOk;
+      if (j && j.lux3d) {
+        setGenerateAvailable(true);
+        st.textContent = j.mock ? '🧪 Backend in MOCK mode (no real Lux3D calls).' : '🟢 Lux3D backend connected. Generation takes a few minutes.';
+      } else if (j) {
+        setGenerateAvailable(false);
+        st.textContent = 'Live generation available in local/server build.';
+      } else throw new Error();
+    } catch {
+      setGenerateAvailable(false);
+      st.textContent = 'Live generation available in local/server build.';
+    }
   }
 
   function open() { onOpen(); err(); $('maker').classList.remove('hidden'); checkBackend(); }

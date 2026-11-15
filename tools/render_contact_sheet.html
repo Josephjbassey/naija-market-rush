@@ -1,0 +1,220 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Lux3D contact sheets</title>
+  <style>
+    html, body { margin: 0; background: #efe4c8; font-family: "IBM Plex Sans", "Liberation Sans", sans-serif; }
+    #status { padding: 12px 16px; font-size: 14px; }
+    canvas.sheet { display: block; background: #efe4c8; }
+  </style>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "/web/node_modules/three/build/three.module.js",
+      "three/addons/": "/web/node_modules/three/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="status">Loading…</div>
+  <div id="out"></div>
+  <script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+
+    const CATALOG = {
+      stall: [
+        ["yam", "Yam tuber"], ["agbada", "Agbada"], ["gele", "Gele"],
+        ["jollof_pot", "Pot of jollof"], ["plantain", "Plantain bunch"], ["palm_oil_keg", "Palm oil keg"],
+        ["ankara_roll", "Ankara roll"], ["torch_phone", "Torchlight phone"], ["lantern", "Kerosene lantern"],
+        ["danfo_toy", "Danfo toy bus"], ["egusi_basin", "Basin of egusi"], ["suya_tray", "Suya tray"]
+      ],
+      ojaoba: [
+        ["talking_drum", "Talking drum"], ["beaded_crown", "Beaded crown"], ["coral_beads", "Coral beads"],
+        ["irukere", "Irukere"], ["calabash_wine", "Palm wine calabash"], ["kola_bowl", "Kolanut bowl"],
+        ["ife_head", "Ife head"], ["aso_oke", "Aso-oke stack"], ["shea_pot", "Shea butter pot"],
+        ["cowrie_purse", "Cowrie purse"], ["royal_staff", "Royal staff"], ["carved_stool", "Royal stool"]
+      ],
+      night: [
+        ["puff_puff", "Puff-puff"], ["akara_tray", "Akara tray"], ["boli_plate", "Boli and corn"],
+        ["coal_brazier", "Coal brazier"], ["pepper_soup", "Pepper soup"], ["zobo_jug", "Zobo jug"],
+        ["groundnut_cone", "Groundnut cone"], ["mosquito_coil", "Mosquito coil"], ["recharge_lamp", "Rechargeable lamp"],
+        ["agbo_bottle", "Agbo bottle"], ["night_mask", "Night mask"], ["amulet_pouch", "Amulet pouch"]
+      ]
+    };
+    const TITLES = {
+      stall: "Mama Jo Stall  ·  12 Lux3D catalog items",
+      ojaoba: "Oja Oba  ·  12 Lux3D catalog items",
+      night: "Night Market  ·  12 Lux3D catalog items"
+    };
+
+    const loader = new GLTFLoader();
+    const draco = new DRACOLoader();
+    draco.setDecoderPath('/web/public/draco/');
+    loader.setDRACOLoader(draco);
+
+    function normalize(obj, size = 1) {
+      const box = new THREE.Box3().setFromObject(obj);
+      const dim = box.getSize(new THREE.Vector3());
+      const max = Math.max(dim.x, dim.y, dim.z) || 1;
+      obj.scale.multiplyScalar(size / max);
+      const box2 = new THREE.Box3().setFromObject(obj);
+      const c = box2.getCenter(new THREE.Vector3());
+      obj.position.x -= c.x; obj.position.z -= c.z; obj.position.y -= box2.min.y;
+      const wrap = new THREE.Group(); wrap.add(obj); return wrap;
+    }
+
+    function makeRenderer(w, h) {
+      const r = new THREE.WebGLRenderer({ antialias: true, alpha: false, preserveDrawingBuffer: true });
+      r.setSize(w, h, false);
+      r.setPixelRatio(1);
+      r.outputColorSpace = THREE.SRGBColorSpace;
+      r.toneMapping = THREE.ACESFilmicToneMapping;
+      r.toneMappingExposure = 1.05;
+      r.setClearColor(0xefe4c8, 1);
+      return r;
+    }
+
+    function studioScene() {
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xefe4c8);
+      scene.add(new THREE.HemisphereLight(0xfff4dd, 0x6b5a3a, 1.15));
+      const key = new THREE.DirectionalLight(0xfff1d0, 1.35);
+      key.position.set(2.4, 4.2, 3.2); scene.add(key);
+      const fill = new THREE.DirectionalLight(0xc9dff5, 0.45);
+      fill.position.set(-3, 1.5, -1.5); scene.add(fill);
+      const rim = new THREE.DirectionalLight(0xffe7b0, 0.35);
+      rim.position.set(0, 2, -3); scene.add(rim);
+      return scene;
+    }
+
+    async function loadModel(file) {
+      const gltf = await loader.loadAsync(`/web/public/assets/models/${file}.glb`);
+      const root = gltf.scene;
+      root.traverse((o) => {
+        if (o.isMesh) {
+          const mats = Array.isArray(o.material) ? o.material : [o.material];
+          mats.forEach((m) => { if (m && m.map) m.map.anisotropy = 4; });
+        }
+      });
+      return normalize(root, 1);
+    }
+
+    async function renderThumb(renderer, file) {
+      const scene = studioScene();
+      const obj = await loadModel(file);
+      scene.add(obj);
+      const box = new THREE.Box3().setFromObject(obj);
+      const size = box.getSize(new THREE.Vector3());
+      const center = box.getCenter(new THREE.Vector3());
+      const radius = Math.max(size.x, size.y, size.z) * 0.75 || 0.6;
+      const camera = new THREE.PerspectiveCamera(32, 1, 0.05, 40);
+      camera.position.set(center.x + radius * 1.35, center.y + radius * 0.85, center.z + radius * 1.7);
+      camera.lookAt(center.x, center.y + size.y * 0.08, center.z);
+      renderer.render(scene, camera);
+      const url = renderer.domElement.toDataURL('image/png');
+      // dispose
+      scene.traverse((o) => {
+        if (o.geometry) o.geometry.dispose?.();
+        if (o.material) {
+          const mats = Array.isArray(o.material) ? o.material : [o.material];
+          mats.forEach((m) => {
+            if (!m) return;
+            for (const k of Object.keys(m)) if (m[k] && m[k].isTexture) m[k].dispose?.();
+            m.dispose?.();
+          });
+        }
+      });
+      return url;
+    }
+
+    function drawSheet(title, cells, cols = 4) {
+      const rows = Math.ceil(cells.length / cols);
+      const cellW = 420, cellH = 470, pad = 28, header = 88, footer = 36;
+      const w = pad * 2 + cols * cellW;
+      const h = header + footer + pad + rows * cellH;
+      const c = document.createElement('canvas');
+      c.width = w; c.height = h; c.className = 'sheet';
+      const g = c.getContext('2d');
+      g.fillStyle = '#efe4c8'; g.fillRect(0, 0, w, h);
+      g.fillStyle = '#06602b';
+      g.font = '700 36px "IBM Plex Serif", "Liberation Serif", serif';
+      g.fillText(title, pad, 56);
+      g.font = '500 18px "IBM Plex Sans", sans-serif';
+      g.fillStyle = '#5a4a32';
+      g.fillText('Aholo Lux3D text-to-3D  ·  G1-Turbo  ·  cartoon  ·  compressed GLB', pad, 80);
+      cells.forEach((cell, i) => {
+        const col = i % cols, row = Math.floor(i / cols);
+        const x = pad + col * cellW, y = header + row * cellH;
+        g.fillStyle = '#fff8e7';
+        g.strokeStyle = '#1b1b1b';
+        g.lineWidth = 3;
+        roundRect(g, x + 10, y + 8, cellW - 20, cellH - 18, 18);
+        g.fill(); g.stroke();
+        const img = cell.img;
+        const iw = 360, ih = 360;
+        g.drawImage(img, x + (cellW - iw) / 2, y + 24, iw, ih);
+        g.fillStyle = '#1b1b1b';
+        g.font = '700 22px "IBM Plex Sans", sans-serif';
+        g.textAlign = 'center';
+        g.fillText(cell.name, x + cellW / 2, y + cellH - 36);
+        g.textAlign = 'left';
+      });
+      document.getElementById('out').appendChild(c);
+      return c;
+    }
+
+    function roundRect(g, x, y, w, h, r) {
+      g.beginPath();
+      g.moveTo(x + r, y);
+      g.arcTo(x + w, y, x + w, y + h, r);
+      g.arcTo(x + w, y + h, x, y + h, r);
+      g.arcTo(x, y + h, x, y, r);
+      g.arcTo(x, y, x + w, y, r);
+      g.closePath();
+    }
+
+    async function dataUrlToImage(url) {
+      return await new Promise((res, rej) => {
+        const img = new Image();
+        img.onload = () => res(img);
+        img.onerror = rej;
+        img.src = url;
+      });
+    }
+
+    const status = document.getElementById('status');
+    const renderer = makeRenderer(512, 512);
+    window.__sheets = {};
+    window.__errors = [];
+    try {
+      for (const [level, items] of Object.entries(CATALOG)) {
+        const cells = [];
+        for (const [file, name] of items) {
+          status.textContent = `Rendering ${name} (${file})…`;
+          try {
+            const url = await renderThumb(renderer, file);
+            cells.push({ name, file, img: await dataUrlToImage(url) });
+          } catch (e) {
+            window.__errors.push(`${file}: ${e && e.message ? e.message : e}`);
+            console.error(file, e);
+          }
+        }
+        const canvas = drawSheet(TITLES[level], cells, 4);
+        window.__sheets[level] = canvas.toDataURL('image/png');
+      }
+      status.textContent = window.__errors.length
+        ? `Done with errors: ${window.__errors.join('; ')}`
+        : 'All contact sheets ready.';
+      window.__done = true;
+    } catch (e) {
+      status.textContent = 'Failed: ' + e;
+      window.__done = true;
+      window.__errors.push(String(e));
+    }
+  </script>
+</body>
+</html>

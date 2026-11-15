@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Naija Market Rush — Project Report · Joseph Bassey John</title>
+<meta name="author" content="Joseph Bassey John" />
+<meta name="description" content="Project report for Naija Market Rush, a Lux3D-powered Nigerian market game, entered in the Manycore Aholo Global 3D AI Hackathon (Gaming Application Award)." />
+<style>
+@font-face { font-family: "IBM Plex Sans"; src: url("report/fonts/IBMPlexSans-Variable.ttf") format("truetype"); font-weight: 100 700; font-style: normal; font-display: swap; }
+@font-face { font-family: "IBM Plex Serif"; src: url("report/fonts/IBMPlexSerif-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; }
+@font-face { font-family: "IBM Plex Serif"; src: url("report/fonts/IBMPlexSerif-SemiBold.ttf") format("truetype"); font-weight: 600; font-style: normal; }
+@font-face { font-family: "IBM Plex Serif"; src: url("report/fonts/IBMPlexSerif-Bold.ttf") format("truetype"); font-weight: 700; font-style: normal; }
+@font-face { font-family: "IBM Plex Mono"; src: url("report/fonts/IBMPlexMono-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; }
+@font-face { font-family: "IBM Plex Mono"; src: url("report/fonts/IBMPlexMono-Medium.ttf") format("truetype"); font-weight: 500; font-style: normal; }
+
+:root {
+  --ink: #1b1b1b;
+  --muted: #5c4d38;
+  --green: #06602b;
+  --green-dark: #043f1c;
+  --gold: #b8860b;
+  --palm: #c45c26;
+  --paper: #fff8e7;
+  --sand: #efe4c8;
+  --card: #fffdf7;
+  --rule: #d9c9a6;
+  --danger: #9b1c1c;
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0;
+  background: #fff;
+  color: var(--ink);
+  font-family: "IBM Plex Sans", "Liberation Sans", sans-serif;
+  font-weight: 420;
+  font-size: 10.2pt;
+  line-height: 1.42;
+  hyphens: none;
+  -webkit-hyphens: none;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+@page { size: A4; margin: 13mm 13mm 15mm 13mm; }
+h1, h2, h3, h4 { font-family: "IBM Plex Serif", "Liberation Serif", serif; color: var(--green-dark); margin: 0 0 0.4em; line-height: 1.2; font-weight: 700; }
+h1 { font-size: 28pt; letter-spacing: -0.02em; }
+h2 { font-size: 13.5pt; margin-top: 0.85em; padding-bottom: 0.15em; border-bottom: 2px solid var(--green); break-after: avoid; page-break-after: avoid; }
+h3 { font-size: 11.5pt; color: var(--green); margin-top: 0.9em; }
+p { margin: 0 0 0.55em; }
+strong { font-weight: 620; }
+em { font-style: italic; }
+a { color: var(--green); }
+ul, ol { margin: 0.2em 0 0.7em 1.2em; padding: 0; }
+li { margin: 0.15em 0; }
+.kicker { font-family: "IBM Plex Sans", sans-serif; font-weight: 600; font-size: 8pt; letter-spacing: 0.12em; text-transform: uppercase; color: var(--green); break-after: avoid; page-break-after: avoid; }
+.lead { font-size: 11.2pt; line-height: 1.45; }
+.muted { color: var(--muted); }
+.small, figcaption, .note { font-size: 8pt; line-height: 1.35; color: var(--muted); }
+mono, .mono, code, td.num { font-family: "IBM Plex Mono", "Liberation Mono", monospace; hyphens: none; overflow-wrap: anywhere; }
+
+/* Cover */
+.cover { page-break-after: always; break-after: page; }
+.cover-banner {
+  background: var(--green-dark);
+  color: #fff8e7;
+  padding: 16pt 18pt 14pt;
+  margin: -4mm -4mm 12pt;
+  border-radius: 0 0 8pt 8pt;
+}
+.cover-banner .track { font-size: 8pt; letter-spacing: 0.14em; text-transform: uppercase; color: #e8c45a; font-weight: 600; }
+.cover-banner h1 { color: #fff8e7; font-size: 30pt; margin: 6pt 0 2pt; }
+.cover-banner .sub { font-family: "IBM Plex Serif", serif; font-size: 13pt; font-weight: 400; color: #efe4c8; margin: 0 0 10pt; }
+.cover-banner .by { font-size: 10pt; color: #fff8e7; }
+.hero { margin: 0 0 8pt; }
+.hero img { width: 100%; height: auto; display: block; border-radius: 6pt; border: 2.5px solid #1b1b1b; }
+.hero figcaption { margin-top: 3pt; }
+
+.placeholder {
+  border: 2px dashed var(--palm);
+  background: #fff3e6;
+  padding: 9pt 12pt;
+  border-radius: 6pt;
+  margin: 8pt 0 12pt;
+  break-inside: avoid;
+}
+.placeholder .ph-title {
+  font-weight: 700; color: var(--palm); font-size: 8pt;
+  letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4pt;
+}
+.placeholder dl { display: grid; grid-template-columns: 22mm 1fr; margin: 0; }
+.placeholder dt { font-weight: 650; color: var(--ink); }
+.placeholder dd { margin: 0 0 2pt; font-family: "IBM Plex Mono", monospace; font-size: 9pt; color: var(--danger); }
+.placeholder dd.live { color: var(--ink); }
+.placeholder dd.live a { color: var(--green); text-decoration: none; }
+
+/* Layout helpers */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8pt 10pt; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8pt; }
+.fig { margin: 0 0 7pt; break-inside: avoid; }
+.fig img { width: 100%; height: auto; display: block; border-radius: 4pt; border: 1.5px solid #1b1b1b; }
+.fig.shot img { max-height: 62mm; object-fit: contain; object-position: center top; background: #efe4c8; }
+.fig.phone img { max-height: 86mm; width: auto; max-width: 100%; margin: 0 auto; object-fit: contain; }
+.fig.sheet { margin-bottom: 5pt; text-align: center; }
+.fig.sheet img { width: auto; max-width: 100%; max-height: 98mm; height: auto; margin: 0 auto; }
+.span-2 { grid-column: 1 / -1; }
+
+.stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7pt; margin: 8pt 0 10pt; break-inside: avoid; }
+.stat {
+  background: var(--sand);
+  border: 1.5px solid #1b1b1b;
+  border-radius: 5pt;
+  padding: 7pt 8pt 6pt;
+}
+.stat b { display: block; font-family: "IBM Plex Serif", serif; font-size: 16pt; color: var(--green-dark); line-height: 1.1; }
+.stat span { display: block; font-size: 7.6pt; color: var(--muted); margin-top: 2pt; }
+
+.pipeline {
+  display: grid;
+  grid-template-columns: 1fr 16px 1fr 16px 1fr 16px 1fr 16px 1fr;
+  align-items: center;
+  gap: 0;
+  margin: 8pt 0 10pt;
+  break-inside: avoid;
+}
+.pipe-box {
+  background: var(--card);
+  border: 1.6px solid #1b1b1b;
+  border-radius: 5pt;
+  padding: 7pt 6pt;
+  text-align: center;
+  font-size: 8.2pt;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.pipe-box small { display: block; font-weight: 450; color: var(--muted); font-size: 7.2pt; }
+.pipe-arr { text-align: center; font-size: 14pt; color: var(--green); font-weight: 700; }
+
+.callout {
+  background: var(--sand);
+  border-left: 4px solid var(--green);
+  padding: 7pt 10pt;
+  margin: 8pt 0 10pt;
+  break-inside: avoid;
+}
+
+table { width: 100%; border-collapse: collapse; font-size: 7.6pt; margin: 4pt 0 10pt; }
+th, td { border-bottom: 0.6pt solid var(--rule); padding: 2.6pt 4pt; text-align: left; vertical-align: top; }
+th { font-size: 7pt; letter-spacing: 0.04em; text-transform: uppercase; color: var(--green-dark); border-bottom: 1.4pt solid var(--green); font-weight: 650; }
+td.num, th.num { text-align: right; font-family: "IBM Plex Mono", monospace; font-size: 7.3pt; white-space: nowrap; }
+tr:nth-child(even) td { background: #faf3e3; }
+table.compact { font-size: 7pt; }
+table.compact td { padding: 1.3pt 3pt; }
+table.compact th { padding: 1.6pt 3pt; }
+.caption { font-size: 8pt; color: var(--muted); margin: -6pt 0 10pt; }
+
+.timeline { list-style: none; margin: 0 0 10pt; padding: 0; }
+.timeline li { display: grid; grid-template-columns: 42mm 1fr; gap: 8pt; margin: 0; padding: 4pt 0; border-bottom: 0.6pt solid var(--rule); break-inside: avoid; }
+.timeline time { font-family: "IBM Plex Mono", monospace; font-size: 8pt; color: var(--green-dark); font-weight: 500; }
+
+.avoid { break-inside: avoid; page-break-inside: avoid; }
+.section { margin-bottom: 2pt; }
+hr.gold { border: 0; border-top: 2px solid var(--gold); margin: 10pt 0; }
+
+footer.colophon { margin-top: 14pt; padding-top: 8pt; border-top: 1.5pt solid var(--green); font-size: 8pt; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<!-- ===================== COVER ===================== -->
+<section class="cover">
+  <div class="cover-banner">
+    <div class="track">Manycore Aholo Global 3D AI Hackathon · Gaming Application Award</div>
+    <h1>Naija Market Rush</h1>
+    <p class="sub">A Lux3D-powered Nigerian market game</p>
+    <p class="by">Joseph Bassey John (solo) · Akure, Nigeria · 15 November 2026</p>
+  </div>
+  <figure class="hero">
+    <img src="screenshots/20-ojaoba-gameplay.png" alt="Gameplay at Oja Oba: a gold stall sign, twelve Lux3D royal and market items on the table, and a customer asking for a beaded crown." />
+    <figcaption>Figure 1. Oja Oba, the Akure king’s market — one of three playable levels. Every item on the table is a real Aholo Lux3D text-to-3D model, compressed for the browser.</figcaption>
+  </figure>
+  <p class="lead">Nigerian markets are loud, fast and funny. In <strong>Naija Market Rush</strong> you run a stall and race to serve shouting customers before their patience runs out. The twist is the shelf: it is stocked with objects moulded by <strong>Aholo Lux3D</strong>, and a player can add another mid-shift by typing a prompt — or dropping in a photo — and waiting for a GLB to land on the table.</p>
+  <div class="placeholder">
+    <div class="ph-title">Submission links — video and X post still placeholders</div>
+    <dl>
+      <dt>Demo</dt><dd class="live"><a href="https://naija-market-rush.vercel.app">https://naija-market-rush.vercel.app</a></dd>
+      <dt>Video</dt><dd>[PLACEHOLDER URL]</dd>
+      <dt>Code</dt><dd class="live"><a href="https://github.com/Josephjbassey/naija-market-rush">https://github.com/Josephjbassey/naija-market-rush</a></dd>
+      <dt>X post</dt><dd>[PLACEHOLDER URL] &nbsp; #Manycorehackathon</dd>
+    </dl>
+  </div>
+  <p class="small">Judging weights this report keeps in view: Manycore tools 30% · Fun 25% · Innovation 20% · Completeness 20%. Deadline 19 November 2026. Every number below is taken from <span class="mono">docs/lux3d_generation_log.json</span>, the shipped code, or screenshots captured from a headless build of the game. No placeholder-era or import-test (Khronos duck) shots are used.</p>
+</section>
+
+<!-- ===================== CONCEPT ===================== -->
+<section class="section">
+  <div class="kicker">01 · Concept</div>
+  <h2>A stall in a market people already know</h2>
+  <p>The hook is simple: you are the person behind the table. Customers arrive in a hurry and shout what they want, often in Nigerian Pidgin — “Abeg, bring me yam!”, “Jollof! Party jollof!”, “NEPA don go! Rechargeable lamp!” You tap the right object. It flies across the stall. Cash, a combo and sometimes a tip land in your hand. Get it wrong, or let someone wait too long, and they walk — and your reputation thins.</p>
+  <p>The cultural setting is not a generic bazaar. Level 1 is an everyday stall (Mama Jo Enterprises) with yam, agbada, gele, a pot of jollof, palm oil, Ankara, a torchlight phone, a kerosene lantern, a toy danfo. Level 2 is <strong>Oja Oba</strong>, the king’s market in Akure: talking drum, beaded ade crown, coral beads, irukere, palm wine in a calabash, kola, a replica Ife head, aso-oke, shea butter, a cowrie purse, a royal staff and a carved stool. Level 3 is a lantern-lit <strong>Night Market</strong> — puff-puff, akara, boli and corn, a coal brazier, pepper soup, zobo, groundnuts, a mosquito coil, a rechargeable lamp, agbo, a slightly spooky carved mask, an amulet pouch — with faster, less patient customers.</p>
+  <p>The game is aimed at casual players, at Nigerians at home and in the diaspora, and at anyone who has never stood in a West African market and wants a short, funny taste of that noise. The innovation is that the goods are not only hand-modelled props: they are generated with Lux3D, and the same pipeline is exposed inside the game so a player can stock something new during a shift.</p>
+</section>
+
+<section class="section">
+  <div class="kicker">02 · Gameplay</div>
+  <h2>Three markets, a haggle, a shop, and a soundtrack</h2>
+  <p>A shift is a timed round (75 s on the stall, 80 s at Oja Oba, 70 s at night). Up to three customers occupy the counter. Each has a patience bar. Correct serves build a combo (a 10% price bump per step, capped); a quick serve can add a tip. A VIP — an Alhaji, a chief, a gele queen — pays double. In the closing seconds the market hits rush hour and people arrive faster. Lose five hearts (five vexed customers) and the shift ends early. Cash from a finished shift is banked in <span class="mono">localStorage</span> (<span class="mono">nmr-save-v1</span>) and used for upgrades and for unlocking later markets.</p>
+
+  <div class="grid-2 avoid">
+    <figure class="fig shot">
+      <img src="screenshots/17-level-select.png" alt="Level select: Mama Jo Stall, Oja Oba and Night Market, all unlocked, with star ratings." />
+      <figcaption>Figure 2. Level select. Oja Oba unlocks with one star on Mama Jo Stall; the Night Market unlocks with one star on Oja Oba.</figcaption>
+    </figure>
+    <figure class="fig shot">
+      <img src="screenshots/26-stall-level1.png" alt="Mama Jo Stall in play, with the original twelve Lux3D items on a green table and two customers waiting." />
+      <figcaption>Figure 3. Level 1, Mama Jo Stall, with the first twelve Lux3D catalog items on the table. The yellow bubble marks a customer who wants to haggle.</figcaption>
+    </figure>
+  </div>
+
+  <h3>Haggling</h3>
+  <p>Some customers will not take the list price. Chance varies by market (22% on the stall, 34% at Oja Oba, 28% at night); VIPs do not haggle. When you serve one of them, a timing bar opens: a needle ping-pongs from cheap to “too costly”, mapping to 55%–140% of the listed price. Lock in the gold band (a fair-to-firm deal) and you earn a 15% bonus on top. Lock too high (past 86% of the bar) and they walk — no heart is lost, but the combo resets. A very cheap offer still sells, without a tip.</p>
+
+  <div class="grid-2 avoid">
+    <figure class="fig shot">
+      <img src="screenshots/21-haggling.png" alt="Haggle overlay with a cheap–fair–gold–high bar and a Lock am button, listed price ₦28,000." />
+      <figcaption>Figure 4. The haggling mini-game. The needle is in the gold band on a ₦28,000 aso-oke stack.</figcaption>
+    </figure>
+    <figure class="fig shot">
+      <img src="screenshots/19-shop-after-upgrades.png" alt="Stall shop with all four upgrades marked Owned and a remaining bank of ₦20,000." />
+      <figcaption>Figure 5. Stall shop after buying all four upgrades. Purchases persist on the device.</figcaption>
+    </figure>
+  </div>
+
+  <h3>Stall upgrades</h3>
+  <p>Banked naira buys four upgrades, saved in the same <span class="mono">localStorage</span> slot: <strong>Faster hands</strong> (₦8,000 — goods fly in 0.28 s instead of 0.45 s), <strong>Bigger shelf</strong> (₦15,000 — 14 slots instead of 12), <strong>Apprentice</strong> (₦25,000 — a helper auto-serves the most impatient non-haggling customer every 7 s), and <strong>Fine canopy</strong> (₦12,000 — a richer awning, and customers wait 18% longer).</p>
+
+  <h3>Night Market, customers, sound</h3>
+  <p>The Night Market is a different mood: darker lighting, hanging lanterns, a moon, shorter patience and a tighter spawn interval (base 1.9 s, rush 0.95 s). Each market has its own customer types — mama / regular / alhaji on the stall; chief, gele queen, messenger at Oja Oba; okada rider, hawker, night owl after dark.</p>
+  <p>Sound is original procedural audio, generated at run time with the Web Audio API. There are no third-party samples in the project. Short synthesised tones cover serve, cash, tip, wrong item, arrival, anger, whoosh, VIP, haggle, shop purchase and a star fanfare. A light afrobeat-ish loop (kick, clap, shekere-like shaker, highlife-ish bass, kalimba-like lead) runs at 100 BPM in a two-bar pattern. A mute toggle silences both the loop and the SFX, and the choice is saved with the rest of the progress file. Sources and licence: <span class="mono">docs/AUDIO_CREDITS.md</span> (dedicated to the public domain, CC0 1.0).</p>
+
+  <div class="grid-2 avoid">
+    <figure class="fig shot">
+      <img src="screenshots/24-night-market.png" alt="Night Market, dark stall with lantern light and twelve night-themed Lux3D items." />
+      <figcaption>Figure 6. Night Market. Lanterns, a darker grade, and a faster, slightly spooky crowd.</figcaption>
+    </figure>
+    <figure class="fig shot">
+      <img src="screenshots/23-ojaoba-results.png" alt="Results screen after an Oja Oba shift: ₦107,000, three served, two stars, Iya Oloja rank." />
+      <figcaption>Figure 7. End of a shift at Oja Oba. Stars are kept as a best-of and are what unlock the next market.</figcaption>
+    </figure>
+  </div>
+
+  <div class="grid-2 avoid">
+    <figure class="fig phone">
+      <img src="screenshots/27-mobile-level-select.png" alt="Mobile level select, stacked cards for the three markets." />
+      <figcaption>Figure 8. Level select on a 390×844 mobile viewport. Cards stack; the full game is playable with tap controls.</figcaption>
+    </figure>
+    <figure class="fig phone">
+      <img src="screenshots/28-mobile-night.png" alt="Night Market on a mobile screen, with a customer asking for boli and corn." />
+      <figcaption>Figure 9. Night Market on a phone-sized viewport, mid-shift.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ===================== LUX3D ===================== -->
+<section class="section">
+  <div class="kicker">03 · Use of Aholo Lux3D</div>
+  <h2>The shelf is a Lux3D catalog — and a live generator</h2>
+  <p>Lux3D is not a decoration around the game. It is how the goods exist. There are two complementary uses, both against the live Global API (region <span class="mono">com</span>), not a mock.</p>
+
+  <h3>Thirty-six catalog items, all text-to-3D</h3>
+  <p>Every shelf item in all three markets — 12 + 12 + 12, <strong>36 of 36</strong> — is a real Aholo Lux3D text-to-3D GLB, generated with version <strong>G1-Turbo</strong>, style <strong>cartoon</strong>, target <strong>30,000 faces</strong>, PBR on, output <span class="mono">glb</span>. Prompts are listed in <span class="mono">docs/LUX3D_ASSETS.md</span> and in the generation log. No catalog item is a procedural placeholder in the shipped build: the start screen reports “36 items across 3 markets: 36 Lux3D models, 0 placeholders.”</p>
+  <p>No Lux3D scenery or environment models were generated for this entry. Neighbour stalls, bunting, the palace silhouette at Oja Oba and the night lanterns are procedural Three.js meshes, with a loader ready to swap them for GLBs if they are added to the manifest later.</p>
+
+  <h3>Live in-game generation, verified</h3>
+  <p>From the “Make an item” screen a player can type a prompt (text-to-3D) or optionally attach a photo (image-to-3D). <span class="mono">server/app.py</span> calls the official SDK, polls the task, downloads the GLB (output URLs expire in about two hours, so the file is cached) and returns it to the browser. The new item is normalised, dropped on the shelf, and sold at a 1.5× “fresh” premium. The same screen also accepts a GLB exported from the Lux3D web app, so a static host without the backend can still be stocked by hand. The public demo at <a href="https://naija-market-rush.vercel.app">https://naija-market-rush.vercel.app</a> is that static case: it is a Vite build of <span class="mono">web/</span> on Vercel, stocked with the 36 shipped GLBs. The FastAPI server and the <span class="mono">AHOLO_API_KEY</span> are not on that host (the key is never placed in the frontend or in the public deploy). When the backend is absent, the Generate control is hidden and the UI shows “Live generation available in local/server build.” Importing a GLB still works.</p>
+  <p>The live path was tested against the real API, not the mock. A <strong>Tomato basket</strong> was generated in-game from the prompt <em>“a woven raffia basket full of red tomatoes, cartoon style, single game prop, clean shape, centered”</em>, priced at ₦5,000, with the line “Abeg, bring tomato basket!”. Task <span class="mono">8012442</span> reached status 3 in <strong>168.4 seconds</strong> (17 polls), used <strong>13 credits</strong>, produced a 9,755,200-byte GLB, and loaded on the shelf. That is the only live in-game generation recorded in the log. Image-to-3D is implemented in the backend and the UI, but it has not been verified with a live photo in this report, and is not claimed as a completed live test.</p>
+
+  <div class="grid-2 avoid">
+    <figure class="fig shot">
+      <img src="screenshots/12-live-lux3d-generating.png" alt="Make an item screen showing Lux3D generating a Tomato basket from a text prompt." />
+      <figcaption>Figure 10. Live in-game generation: the Make an item UI talking to the real Lux3D API.</figcaption>
+    </figure>
+    <figure class="fig shot">
+      <img src="screenshots/13-live-lux3d-item-on-shelf.png" alt="Tomato basket, freshly generated, sitting on the stall shelf among other items." />
+      <figcaption>Figure 11. The Tomato basket on the shelf after task 8012442 completed in 168.4 s.</figcaption>
+    </figure>
+  </div>
+
+  <h3>The pipeline</h3>
+  <div class="pipeline">
+    <div class="pipe-box">Prompt<small>or photo</small></div>
+    <div class="pipe-arr">→</div>
+    <div class="pipe-box">Lux3D API<small>G1-Turbo, cartoon, 30k faces</small></div>
+    <div class="pipe-arr">→</div>
+    <div class="pipe-box">GLB<small>raw, ~7–12 MB</small></div>
+    <div class="pipe-arr">→</div>
+    <div class="pipe-box">gltf-transform<small>Draco + WebP 1024</small></div>
+    <div class="pipe-arr">→</div>
+    <div class="pipe-box">Three.js shelf<small>manifest + DRACOLoader</small></div>
+  </div>
+  <p>Catalog generation used <span class="mono">POST https://api.aholo.ai/global/lux3d/v1/generate/text-to-3d/task/create</span>, then <span class="mono">GET …/generate/task/get?taskid=</span> until <span class="mono">status=3</span>. The header is <span class="mono">Authorization: &lt;key&gt;</span> (no Bearer). Calls go through the official package <span class="mono">manycore-aholo-sdk-lux3d</span>, region <span class="mono">com</span>. Raw GLBs were compressed with <span class="mono">gltf-transform 4.5.1 optimize --compress draco --texture-compress webp --texture-size 1024</span>. The game already ships a Draco decoder and Three.js loads WebP textures, so the compressed files are what the player downloads. Each mesh is auto-scaled and seated on the table by a <span class="mono">normalize()</span> helper, so a model that arrives large or off-centre still sits correctly on a slot.</p>
+</section>
+
+<!-- ===================== GALLERY ===================== -->
+<section class="section">
+  <div class="kicker">04 · Key assets</div>
+  <h2>A gallery of the 36 catalog models</h2>
+  <p>The contact sheets below were rendered in a headless Chrome / Three.js studio from the same compressed GLBs the game ships — not from screenshots of placeholders, and not from the Lux3D website. Every tile is one catalog item. Inputs were text prompts (no source photographs were used for the catalog). Each item was generated once at G1-Turbo; there was no second stylistic pass. Three tasks (coral beads, Ife head, aso-oke) completed after a local poll timed out or a generator process was interrupted; they were downloaded by the original task id and were not billed a second time.</p>
+
+  <figure class="fig sheet">
+    <img src="report/contact-stall.jpg" alt="Contact sheet of the twelve Mama Jo Stall Lux3D items." />
+    <figcaption>Figure 12. Mama Jo Stall — twelve Lux3D catalog items, studio render of the shipped GLBs.</figcaption>
+  </figure>
+  <figure class="fig sheet">
+    <img src="report/contact-ojaoba.jpg" alt="Contact sheet of the twelve Oja Oba Lux3D items." />
+    <figcaption>Figure 13. Oja Oba — talking drum, beaded crown, coral beads, irukere, calabash, kola, Ife head, aso-oke, shea, cowrie purse, royal staff, stool.</figcaption>
+  </figure>
+  <figure class="fig sheet">
+    <img src="report/contact-night.jpg" alt="Contact sheet of the twelve Night Market Lux3D items." />
+    <figcaption>Figure 14. Night Market — street-food, coils, a rechargeable lamp, agbo, a carved mask and an amulet pouch.</figcaption>
+  </figure>
+</section>
+
+<section class="section avoid">
+  <h3>Six items, with the prompt and the real numbers</h3>
+  <p>The prompts below are the exact strings sent to Lux3D (a shared suffix, “Single object, game prop, clean shape, centered,” is appended in the log). Sizes are raw download versus the compressed file in <span class="mono">web/public/assets/models/</span>. Each of these cost 13 credits.</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th>Prompt (abridged)</th>
+        <th class="num">Task</th>
+        <th class="num">Time</th>
+        <th class="num">Raw → compressed</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Yam tuber</td>
+        <td>A single large West African yam tuber, rough brown bark-like skin, one end cut showing white flesh, game prop.</td>
+        <td class="num">8011611</td>
+        <td class="num">115.7 s</td>
+        <td class="num">6.85 MB → 205 KB</td>
+      </tr>
+      <tr>
+        <td>Agbada</td>
+        <td>A flowing Nigerian agbada robe in royal blue with gold embroidery around the neck, displayed on an invisible mannequin, with matching fila cap.</td>
+        <td class="num">8011794</td>
+        <td class="num">126.8 s</td>
+        <td class="num">8.95 MB → 358 KB</td>
+      </tr>
+      <tr>
+        <td>Pot of jollof</td>
+        <td>A dented aluminium cooking pot full of smoky orange Nigerian jollof rice with a few green peas and a bay leaf, two side handles.</td>
+        <td class="num">8011910</td>
+        <td class="num">125.6 s</td>
+        <td class="num">10.65 MB → 500 KB</td>
+      </tr>
+      <tr>
+        <td>Beaded crown</td>
+        <td>A Yoruba royal ade crown covered in colourful coral and glass beads with a beaded face veil, cartoon game prop.</td>
+        <td class="num">8013965</td>
+        <td class="num">505.4 s</td>
+        <td class="num">11.83 MB → 637 KB</td>
+      </tr>
+      <tr>
+        <td>Ife head</td>
+        <td>A bronze Ife head sculpture replica, serene face with delicate scarification, metallic brown, cartoon game prop.</td>
+        <td class="num">8014317</td>
+        <td class="num">671.0 s</td>
+        <td class="num">8.58 MB → 306 KB</td>
+      </tr>
+      <tr>
+        <td>Night mask</td>
+        <td>A slightly spooky carved wooden Yoruba-style face mask, dark wood with white painted eyes, standalone, cartoon game prop.</td>
+        <td class="num">8015762</td>
+        <td class="num">146.1 s</td>
+        <td class="num">8.93 MB → 290 KB</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="caption">Table 1. Six representative catalog items. Full prompts, timestamps and byte counts for all 36 items are in Table 3 and in <span class="mono">docs/lux3d_generation_log.json</span>. MB = 10<sup>6</sup> bytes, KB = 10<sup>3</sup> bytes, rounded.</p>
+</section>
+
+<!-- ===================== STATS ===================== -->
+<section class="section">
+  <div class="kicker">05 · Numbers</div>
+  <h2>Credits, time, and the cost of a light download</h2>
+  <div class="stat-row">
+    <div class="stat"><b>481</b><span>credits in total (468 catalog + 13 in-game Tomato basket)</span></div>
+    <div class="stat"><b>36 / 36</b><span>catalog items succeeded (0 failed, after salvage of 3 tasks)</span></div>
+    <div class="stat"><b>13</b><span>credits per G1-Turbo text-to-3D task, charged at create</span></div>
+    <div class="stat"><b>95.9%</b><span>size saved by Draco + WebP compression on the catalog</span></div>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Batch</th>
+        <th class="num">Items</th>
+        <th class="num">Credits</th>
+        <th class="num">Time (min / median / max)</th>
+        <th class="num">Raw</th>
+        <th class="num">Compressed</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Round 1 — Mama Jo Stall</td>
+        <td class="num">12 / 12</td>
+        <td class="num">156</td>
+        <td class="num">108.6 / 127.9 / 357.0 s</td>
+        <td class="num">99.35 MB</td>
+        <td class="num">4.00 MB</td>
+      </tr>
+      <tr>
+        <td>Round 2 — Oja Oba + Night Market</td>
+        <td class="num">24 / 24</td>
+        <td class="num">312</td>
+        <td class="num">116.2 / 165.6 / 733.0 s</td>
+        <td class="num">214.17 MB</td>
+        <td class="num">8.75 MB</td>
+      </tr>
+      <tr>
+        <td>Catalog total</td>
+        <td class="num">36 / 36</td>
+        <td class="num">468</td>
+        <td class="num">108.6 / 147.4 / 733.0 s</td>
+        <td class="num">313.51 MB</td>
+        <td class="num">12.75 MB</td>
+      </tr>
+      <tr>
+        <td>In-game Tomato basket (task 8012442)</td>
+        <td class="num">1 / 1</td>
+        <td class="num">13</td>
+        <td class="num">168.4 s (17 polls)</td>
+        <td class="num">9.76 MB</td>
+        <td class="num">not compressed*</td>
+      </tr>
+      <tr>
+        <td><strong>Grand total</strong></td>
+        <td class="num">37</td>
+        <td class="num"><strong>481</strong></td>
+        <td class="num">mean catalog time 230.0 s</td>
+        <td class="num">323.27 MB†</td>
+        <td class="num">12.75 MB catalog</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="caption">Table 2. Credit and size summary, from <span class="mono">docs/lux3d_generation_log.json</span>. Times are wall-clock from create (or, for three salvaged Round-2 tasks, API <span class="mono">lastModified − created</span>). *The in-game basket was served from the API cache and was not put through the catalog gltf-transform pass. †Raw catalog + in-game bytes.</p>
+  <p>The shortest catalog generation was the kerosene lantern (108.6 s). The longest was coral beads (733.0 s), which finished after a 600 s local poll had already given up; the file was then downloaded by task id 8013966. Across the catalog, compression took 313,514,600 bytes of raw GLB (mostly uncompressed PNG textures) down to 12,751,432 bytes — 4.1% of the original — which is what makes three markets feasible to ship in a browser download of about 12.8 MB of models.</p>
+</section>
+
+<section class="section">
+  <div class="kicker">06 · How it was built</div>
+  <h2>One day, two commits of assets, a playable loop first</h2>
+  <p>All of the work described here was done on <strong>15 November 2026</strong> (Africa/Lagos, WAT, UTC+1). The process was: a playable Three.js loop with procedural placeholder meshes and the Lux3D pipeline already wired; then a first catalog of 12 real models and a live in-game generation; then an expansion to three markets, haggling, a stall shop, music, and 24 further models. Placeholder-era screenshots exist in the repo for the record but are not used in this report.</p>
+  <ul class="timeline">
+    <li><time>12:01 WAT</time><span>Playable game committed: Three.js stall, customers, combo, VIP, rush hour, Make an item UI, FastAPI Lux3D backend (<span class="mono">dc5db37</span>).</span></li>
+    <li><time>12:07–12:21</time><span>Round 1 catalog: 12 text-to-3D tasks, all successful (156 credits). Then Draco + WebP compression (raw 99.35 MB → 4.00 MB).</span></li>
+    <li><time>12:28–12:31</time><span>Live in-game Tomato basket, task 8012442, 168.4 s, 13 credits, loaded on the shelf.</span></li>
+    <li><time>12:35</time><span>First 12 real models committed (<span class="mono">9d314a5</span>).</span></li>
+    <li><time>Afternoon</time><span>Levels, haggling, shop, procedural audio. Round 2: 24 further G1-Turbo items (312 credits). Three tasks salvaged by id after a timeout or an interrupted poll; none were re-created.</span></li>
+    <li><time>14:45 WAT</time><span>Expansion committed, with 36 shipped models and a passing headless tour of every new screen (<span class="mono">4b8c2b4</span>).</span></li>
+  </ul>
+</section>
+
+<section class="section">
+  <div class="kicker">07 · Tech stack &amp; how to run</div>
+  <h2>What it is made of, and how to open it</h2>
+  <p>Principal tools, and what they were used for (hackathon rule II.2):</p>
+  <ul>
+    <li><strong>Aholo Lux3D</strong> (Global API, official SDK <span class="mono">manycore-aholo-sdk-lux3d</span>) — every catalog 3D asset, and the live in-game generator.</li>
+    <li><strong>Three.js</strong> — real-time rendering, GLTFLoader + DRACOLoader, procedural market, customers, lighting.</li>
+    <li><strong>Vite</strong> — development server and production build of <span class="mono">web/</span>.</li>
+    <li><strong>Vercel</strong> — public static hosting of the Vite build (project root <span class="mono">web/</span>). Production alias: <span class="mono">naija-market-rush.vercel.app</span>. Unique deployment URLs stay behind Vercel Authentication; only that alias is public. No API key is configured on the project.</li>
+    <li><strong>FastAPI</strong> (<span class="mono">server/app.py</span>) — <span class="mono">/api/make</span>, task polling, GLB cache, optional static hosting of <span class="mono">web/dist</span>.</li>
+    <li><strong>gltf-transform 4.5.1</strong> — Draco mesh compression and WebP texture compression for the catalog.</li>
+    <li><strong>Playwright + Chromium</strong> — headless gameplay tests and the screenshots in this report; also the contact-sheet studio renders.</li>
+    <li><strong>Gradio / ModelScope</strong> — a Studio wrapper exists (<span class="mono">modelscope/app.py</span>, <span class="mono">scripts/build_modelscope.sh</span>). A ModelScope deploy has not been tested and is not claimed.</li>
+    <li><strong>Web Audio API</strong> — all sound and the afrobeat-ish loop, no audio files.</li>
+    <li><strong>Grok Bot</strong> (AI coding assistant) — used to help write, test and iterate the game, drive the official Lux3D API for the catalog, and prepare this report.</li>
+  </ul>
+  <div class="callout">
+    <strong>To play the public demo.</strong> Open <a href="https://naija-market-rush.vercel.app">https://naija-market-rush.vercel.app</a>. All 36 catalog items load from the shipped GLBs. Live generation is not enabled on this host.<br /><br />
+    <strong>To play locally, game only.</strong> <span class="mono">cd web && npm install && npm run dev</span> — then open <span class="mono">http://localhost:5173</span>. The 36 catalog items load from <span class="mono">web/public/assets/</span>. “Import a Lux3D .glb” works on any static host. “Generate with Lux3D” needs the backend.<br /><br />
+    <strong>To enable live generation.</strong> Create a virtualenv, <span class="mono">pip install -r server/requirements.txt</span>, build the web app, set <span class="mono">AHOLO_API_KEY</span> (a Global key from https://3d.aholo.ai — never commit it), and run <span class="mono">python server/app.py</span>. Without a key, <span class="mono">LUX3D_MOCK=1 python server/app.py</span> serves a fake purple cube and spends no credits.<br /><br />
+    Headless checks: <span class="mono">python tests/smoke.py</span> and <span class="mono">python tools/nmr_expand_test.py</span> against a Vite preview build.
+  </div>
+</section>
+
+<section class="section">
+  <div class="kicker">08 · Results, limits, next</div>
+  <h2>What is actually finished, and what is not</h2>
+  <h3>Verified in this build</h3>
+  <ul>
+    <li>A complete, mobile-friendly game with three markets, star-based unlocks, haggling, a stall shop, combo / tips / VIP / rush hour / reputation, and procedural audio with a persisted mute toggle.</li>
+    <li>36 / 36 shelf items are real Lux3D G1-Turbo GLBs, compressed and loading in the game (0 placeholders).</li>
+    <li>Live in-game text-to-3D, end-to-end against the Global API (Tomato basket, 168.4 s, task 8012442).</li>
+    <li>GLB import from the Lux3D web app, so a static host still has a path to new items.</li>
+    <li>A public static demo at <span class="mono">https://naija-market-rush.vercel.app</span>, verified in a headless browser: HTTP 200, 36 / 36 catalog models loaded, 0 placeholders.</li>
+    <li>Headless tours of level select, shop, haggling, all three markets, results, and mobile viewports.</li>
+  </ul>
+  <p>The author’s own playtest of the first stall is what led to the same-day expansion (the two new markets, haggling, the shop, and music). No external playtest scores or third-party quotes are claimed here.</p>
+
+  <h3>Limitations (honest)</h3>
+  <ul>
+    <li>The catalog was generated from text prompts, not from photographs taken in a real market. Image-to-3D is wired, but it is not a verified live test in this report.</li>
+    <li>No Lux3D scenery assets were generated; the world around the stall is procedural.</li>
+    <li>Generation time varied widely (108.6 s to 733.0 s). Credits are charged at create even if a local poll times out; three Round-2 files had to be salvaged by task id. Output URLs expire in about two hours.</li>
+    <li>The in-game Tomato basket was not put through the catalog compression pass (raw 9.76 MB).</li>
+    <li>The Night Market is deliberately dark; a few items on the lower shelf are harder to read than on the day markets.</li>
+    <li>The public Vercel demo is static: it plays the shipped catalog, but live Lux3D generation is not offered there (no backend, no API key). Hosting on ModelScope Studio has not been tested. The video and X post links on the first page are still placeholders.</li>
+    <li>Single-player only. Sound is synthesised, not recorded.</li>
+  </ul>
+
+  <h3>What’s next</h3>
+  <ul>
+    <li>Photograph real goods in Akure markets (including Oja Oba) and run them through the already-wired image-to-3D path, with side-by-side prompt-versus-photo comparisons.</li>
+    <li>Lux3D scenery: stall umbrella, a danfo, a fabric rack, a mama-put stand — the manifest already has a place for them.</li>
+    <li>Further markets (Kano, Onitsha, Balogun Street) and, later, a multiplayer market day.</li>
+    <li>Lux3D articulation for items that should flex or steam, and a slightly brighter fill light on the night shelf.</li>
+    <li>A tested ModelScope Studio deploy, and optionally a private server-side backend if live generation should be offered online. Fill in the video and X post links still marked <span class="mono">[PLACEHOLDER URL]</span> on the first page.</li>
+  </ul>
+</section>
+
+<section class="section">
+  <h2>Credits &amp; licences</h2>
+  <p>Game, catalog prompts, report and procedural audio: Joseph Bassey John. 3D catalog and the live Tomato basket: Aholo Lux3D (G1-Turbo, cartoon). Engine and tooling as listed in section 7. Audio: original work, CC0 1.0 — see <span class="mono">docs/AUDIO_CREDITS.md</span>. This report is set in IBM Plex (SIL Open Font License). Third-party engine and library licences remain with their authors (Three.js, Vite, FastAPI, Playwright, gltf-transform, Gradio).</p>
+  <p class="small"><strong>Links:</strong> the public demo and the GitHub repository are filled in on the title page. The video and X post remain clearly marked <span class="mono">[PLACEHOLDER URL]</span> and must be filled in before submission.</p>
+</section>
+
+<!-- ===================== APPENDIX TABLE ===================== -->
+<section class="section">
+  <h2>Appendix · All 36 catalog generations</h2>
+  <p class="small">Source: <span class="mono">docs/lux3d_generation_log.json</span>. Status 3 / success for every row. Credits 13 each. Compression: gltf-transform 4.5.1, Draco + WebP 1024. Times in seconds.</p>
+  <div class="grid-2 avoid"><table class="compact">
+    <thead>
+      <tr>
+        <th>Level</th><th>Item</th>
+        <th class="num">Task id</th>
+        <th class="num">Time (s)</th>
+        <th class="num">Raw bytes</th>
+        <th class="num">Compressed</th>
+        <th class="num">Credits</th>
+      </tr>
+    </thead>
+    <tbody>
+<tr><td>Stall</td><td>Yam tuber</td><td class='num'>8011611</td><td class='num'>115.7</td><td class='num'>6,845,120</td><td class='num'>204,508</td><td class='num'>13</td></tr>
+<tr><td>Stall</td><td>Agbada</td><td class='num'>8011794</td><td class='num'>126.8</td><td class='num'>8,954,092</td><td class='num'>357,744</td><td class='num'>13</td></tr>
+<tr><td>Stall</td><td>Gele</td><td class='num'>8011797</td><td class='num'>127.9</td><td class='num'>9,021,460</td><td class='num'>397,528</td><td class='num'>13</td></tr>
+<tr><td>Stall</td><td>Pot of jollof</td><td class='num'>8011910</td><td class='num'>125.6</td><td class='num'>10,647,600</td><td class='num'>500,148</td><td class='num'>13</td></tr>
+<tr><td>Stall</td><td>Plantain bunch</td><td class='num'>8011916</td><td class='num'>143.3</td><td class='num'>7,811,840</td><td class='num'>262,408</td><td class='num'>13</td></tr>
+<tr><td>Stall</td><td>Palm oil keg</td><td class='num'>8012028</td><td class='num'>143.7</td><td class='num'>7,343,368</td><td class='num'>290,428</td><td class='num'>13</td></tr>
+<tr><td>Stall</td><td>Ankara roll</td><td class='num'>8012041</td><td class='num'>161.8</td><td class='num'>9,691,860</td><td class='num'>319,736</td><td class='num'>13</td></tr>
+<tr><td>Stall</td><td>Torchlight phone</td><td class='num'>8012110</td><td class='num'>204.9</td><td class='num'>6,640,052</td><td class='num'>257,732</td><td class='num'>13</td></tr>
+<tr><td>Stall</td><td>Kerosene lantern</td><td class='num'>8012125</td><td class='num'>108.6</td><td class='num'>8,073,224</td><td class='num'>328,868</td><td class='num'>13</td></tr>
+<tr><td>Stall</td><td>Danfo toy bus</td><td class='num'>8012177</td><td class='num'>357.0</td><td class='num'>8,302,172</td><td class='num'>400,444</td><td class='num'>13</td></tr>
+<tr><td>Stall</td><td>Basin of egusi</td><td class='num'>8012199</td><td class='num'>114.6</td><td class='num'>8,093,932</td><td class='num'>334,716</td><td class='num'>13</td></tr>
+<tr><td>Stall</td><td>Suya tray</td><td class='num'>8012263</td><td class='num'>127.9</td><td class='num'>7,921,712</td><td class='num'>350,200</td><td class='num'>13</td></tr>
+<tr><td>Oja Oba</td><td>Talking drum</td><td class='num'>8013931</td><td class='num'>127.4</td><td class='num'>7,796,220</td><td class='num'>323,916</td><td class='num'>13</td></tr>
+<tr><td>Oja Oba</td><td>Beaded crown</td><td class='num'>8013965</td><td class='num'>505.4</td><td class='num'>11,828,180</td><td class='num'>636,880</td><td class='num'>13</td></tr>
+<tr><td>Oja Oba</td><td>Coral beads</td><td class='num'>8013966</td><td class='num'>733.0</td><td class='num'>10,565,900</td><td class='num'>372,092</td><td class='num'>13</td></tr>
+<tr><td>Oja Oba</td><td>Irukere</td><td class='num'>8014080</td><td class='num'>669.2</td><td class='num'>8,614,684</td><td class='num'>390,824</td><td class='num'>13</td></tr>
+<tr><td>Oja Oba</td><td>Palm wine calabash</td><td class='num'>8014109</td><td class='num'>240.9</td><td class='num'>7,490,428</td><td class='num'>255,204</td><td class='num'>13</td></tr>
+<tr><td>Oja Oba</td><td>Kolanut bowl</td><td class='num'>8014171</td><td class='num'>497.9</td><td class='num'>7,863,652</td><td class='num'>319,632</td><td class='num'>13</td></tr>
+    </tbody>
+  </table>
+<table class="compact">
+    <thead>
+      <tr>
+        <th>Level</th><th>Item</th>
+        <th class="num">Task id</th>
+        <th class="num">Time (s)</th>
+        <th class="num">Raw bytes</th>
+        <th class="num">Compressed</th>
+        <th class="num">Credits</th>
+      </tr>
+    </thead>
+    <tbody>
+<tr><td>Oja Oba</td><td>Ife head</td><td class='num'>8014317</td><td class='num'>671.0</td><td class='num'>8,575,360</td><td class='num'>305,796</td><td class='num'>13</td></tr>
+<tr><td>Oja Oba</td><td>Aso-oke stack</td><td class='num'>8014438</td><td class='num'>212.0</td><td class='num'>9,604,044</td><td class='num'>351,248</td><td class='num'>13</td></tr>
+<tr><td>Oja Oba</td><td>Shea butter pot</td><td class='num'>8014974</td><td class='num'>117.9</td><td class='num'>8,766,892</td><td class='num'>322,868</td><td class='num'>13</td></tr>
+<tr><td>Oja Oba</td><td>Cowrie purse</td><td class='num'>8014975</td><td class='num'>116.2</td><td class='num'>8,007,860</td><td class='num'>286,760</td><td class='num'>13</td></tr>
+<tr><td>Oja Oba</td><td>Royal staff</td><td class='num'>8015073</td><td class='num'>120.1</td><td class='num'>9,855,968</td><td class='num'>515,264</td><td class='num'>13</td></tr>
+<tr><td>Oja Oba</td><td>Royal stool</td><td class='num'>8015076</td><td class='num'>204.8</td><td class='num'>9,977,844</td><td class='num'>509,424</td><td class='num'>13</td></tr>
+<tr><td>Night Market</td><td>Puff-puff</td><td class='num'>8015126</td><td class='num'>163.1</td><td class='num'>8,236,988</td><td class='num'>331,896</td><td class='num'>13</td></tr>
+<tr><td>Night Market</td><td>Akara tray</td><td class='num'>8015158</td><td class='num'>124.8</td><td class='num'>10,549,988</td><td class='num'>380,556</td><td class='num'>13</td></tr>
+<tr><td>Night Market</td><td>Boli and corn</td><td class='num'>8015183</td><td class='num'>137.7</td><td class='num'>9,711,988</td><td class='num'>369,644</td><td class='num'>13</td></tr>
+<tr><td>Night Market</td><td>Coal brazier</td><td class='num'>8015243</td><td class='num'>168.1</td><td class='num'>12,151,196</td><td class='num'>493,376</td><td class='num'>13</td></tr>
+<tr><td>Night Market</td><td>Pepper soup</td><td class='num'>8015306</td><td class='num'>140.2</td><td class='num'>8,518,184</td><td class='num'>376,408</td><td class='num'>13</td></tr>
+<tr><td>Night Market</td><td>Zobo jug</td><td class='num'>8015326</td><td class='num'>175.6</td><td class='num'>7,987,588</td><td class='num'>317,336</td><td class='num'>13</td></tr>
+<tr><td>Night Market</td><td>Groundnut cone</td><td class='num'>8015350</td><td class='num'>401.0</td><td class='num'>8,993,008</td><td class='num'>331,104</td><td class='num'>13</td></tr>
+<tr><td>Night Market</td><td>Mosquito coil</td><td class='num'>8015430</td><td class='num'>317.8</td><td class='num'>7,094,696</td><td class='num'>230,612</td><td class='num'>13</td></tr>
+<tr><td>Night Market</td><td>Rechargeable lamp</td><td class='num'>8015652</td><td class='num'>148.8</td><td class='num'>6,856,164</td><td class='num'>259,680</td><td class='num'>13</td></tr>
+<tr><td>Night Market</td><td>Agbo bottle</td><td class='num'>8015692</td><td class='num'>129.4</td><td class='num'>7,488,356</td><td class='num'>445,020</td><td class='num'>13</td></tr>
+<tr><td>Night Market</td><td>Night mask</td><td class='num'>8015762</td><td class='num'>146.1</td><td class='num'>8,928,188</td><td class='num'>290,436</td><td class='num'>13</td></tr>
+<tr><td>Night Market</td><td>Amulet pouch</td><td class='num'>8015771</td><td class='num'>152.3</td><td class='num'>8,704,792</td><td class='num'>330,996</td><td class='num'>13</td></tr>
+    </tbody>
+  </table>
+</div>
+  <p class="caption">Table 3. Complete catalog log. Coral beads, Ife head and aso-oke were salvaged by task id after a timeout or an interrupted poll; credits and task ids are the original ones.</p>
+  <footer class="colophon">
+    Naija Market Rush · Project report for the Manycore Aholo Global 3D AI Hackathon (Gaming Application Award) · Joseph Bassey John · 15 November 2026 · Africa/Lagos (WAT). Figures are taken from the generation log, the shipped code and screenshots of the built game.
+  </footer>
+</section>
+
+</body>
+</html>

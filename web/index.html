@@ -127,6 +127,7 @@
         </div>
         <div class="tabpane" id="tab-lux">
           <p class="tiny" id="lux-status">Checking Lux3D backend…</p>
+          <div id="lux-fields">
           <label>Photo of a real item (optional)<input type="file" id="lux-photo" accept="image/*" capture="environment" /></label>
           <label>…or describe it<input type="text" id="lux-prompt" maxlength="300" placeholder="e.g. a woven raffia basket full of red tomatoes" /></label>
           <div class="row2">
@@ -136,6 +137,7 @@
           <label>What customers shout<input type="text" id="lux-line" maxlength="60" placeholder="Abeg, bring tomato basket!" /></label>
           <button class="btn primary" id="lux-go">✨ Generate 3D item</button>
           <div class="progress hidden" id="lux-progress"><div class="spinner"></div><span id="lux-progress-text">Lux3D dey mould am…</span></div>
+          </div>
         </div>
         <div class="tabpane hidden" id="tab-import">
           <p class="tiny">Made an item in the <a href="https://3d.aholo.ai" target="_blank" rel="noopener">Aholo Lux3D web app</a>? Download the GLB and drop it here.</p>
