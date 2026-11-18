@@ -50,7 +50,7 @@ export function createWorld(canvas) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.shadowMap.type = THREE.PCFShadowMap;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
@@ -64,7 +64,8 @@ export function createWorld(canvas) {
   const hemi = new THREE.HemisphereLight(0xfff3d6, 0x9a6b3c, 1.3); scene.add(hemi);
   const sun = new THREE.DirectionalLight(0xffe2b0, 2.4);
   sun.position.set(6, 12, 8); sun.castShadow = true;
-  sun.shadow.mapSize.set(2048, 2048);
+  sun.shadow.mapSize.set(1024, 1024);
+  sun.shadow.bias = -0.0005;
   Object.assign(sun.shadow.camera, { left: -14, right: 14, top: 14, bottom: -14, near: 1, far: 40 });
   scene.add(sun);
 
@@ -227,6 +228,8 @@ export function createWorld(canvas) {
     camera.updateProjectionMatrix();
   }
   resize();
+  window.addEventListener('resize', resize);
+  window.addEventListener('orientationchange', () => setTimeout(resize, 120));
 
   function animateCrowd(t) {
     crowd.forEach((c) => { c.obj.position.x = c.baseX + Math.sin(t * c.speed + c.phase) * 1.2; c.obj.position.y = Math.abs(Math.sin(t * 4 * c.speed + c.phase)) * 0.06; });

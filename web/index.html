@@ -22,7 +22,7 @@
       <div class="hud-center"><div class="pill combo" id="hud-combo">Combo x0</div></div>
       <div class="hud-right">
         <div class="pill" id="hud-rep">❤❤❤❤❤</div>
-        <button class="pill btn-small" id="btn-make-hud" title="Make a new item">＋ Item</button>
+        <button class="pill btn-small" id="btn-make-hud" title="Add a custom 3D item to your stall">＋ Custom Item</button>
         <button class="pill btn-small" id="btn-mute" title="Sound">🔊</button>
       </div>
     </div>
@@ -39,12 +39,12 @@
           <li>🔥 Back-to-back correct serves = combo bonus. Quick serve = tip.</li>
           <li>💬 When somebody wan haggle, lock the price in the green — too high and they waka.</li>
           <li>👑 Watch out for big spenders. They pay double.</li>
-          <li>✨ <b>Make your own item</b> with Aholo Lux3D. Fresh items sell at a premium.</li>
+          <li>✨ <b>Add custom 3D items</b> with Aholo Lux3D or import any .glb. Fresh items sell at a premium.</li>
         </ul>
         <div class="row">
           <button class="btn primary" id="btn-markets">Choose your market</button>
           <button class="btn" id="btn-shop-start">Stall shop</button>
-          <button class="btn" id="btn-make-start">✨ Make an item</button>
+          <button class="btn" id="btn-make-start">✨ Add Custom Item</button>
         </div>
         <p class="tiny" id="asset-status">Loading market…</p>
         <p class="tiny" id="bank-status"></p>
@@ -111,7 +111,7 @@
           <button class="btn primary" id="btn-again">Another shift</button>
           <button class="btn" id="btn-over-markets">Markets</button>
           <button class="btn" id="btn-shop-over">Stall shop</button>
-          <button class="btn" id="btn-make-over">✨ Make an item</button>
+          <button class="btn" id="btn-make-over">✨ Add Custom Item</button>
         </div>
       </div>
     </div>
@@ -119,13 +119,16 @@
     <div id="maker" class="screen hidden">
       <div class="card wide">
         <button class="close" id="maker-close" aria-label="Close">✕</button>
-        <div class="kicker">Stock your shelf</div>
-        <h2>Make a new item</h2>
+        <div class="kicker">Custom Item Studio</div>
+        <h2>Add a custom 3D item</h2>
+        <p class="lead" style="font-size:0.95rem; margin-top:0.2rem; margin-bottom:0.8rem; color:#4a3f35;">
+          Your stall is already fully stocked with 36 authentic Nigerian market goods! Use this tool anytime to import your own 3D character or item (.glb) to sell on your shelf.
+        </p>
         <div class="tabs">
-          <button class="tab active" data-tab="lux">Generate with Lux3D</button>
-          <button class="tab" data-tab="import">Import a Lux3D .glb</button>
+          <button class="tab active" data-tab="import">Import a .glb model</button>
+          <button class="tab" data-tab="lux">Generate with Lux3D</button>
         </div>
-        <div class="tabpane" id="tab-lux">
+        <div class="tabpane hidden" id="tab-lux">
           <p class="tiny" id="lux-status">Checking Lux3D backend…</p>
           <div id="lux-fields">
           <label>Photo of a real item (optional)<input type="file" id="lux-photo" accept="image/*" capture="environment" /></label>
@@ -139,7 +142,7 @@
           <div class="progress hidden" id="lux-progress"><div class="spinner"></div><span id="lux-progress-text">Lux3D dey mould am…</span></div>
           </div>
         </div>
-        <div class="tabpane hidden" id="tab-import">
+        <div class="tabpane" id="tab-import">
           <p class="tiny">Made an item in the <a href="https://3d.aholo.ai" target="_blank" rel="noopener">Aholo Lux3D web app</a>? Download the GLB and drop it here.</p>
           <div id="drop" class="drop">Drop a .glb here or <u>browse</u><input type="file" id="imp-file" accept=".glb,model/gltf-binary" /></div>
           <div class="row2">

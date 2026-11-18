@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { createWorld } from './world.js';
-import { loadManifest, loadItemModel, loadSceneryModel, normalize } from './items.js';
+import { loadManifest, loadItemModel, loadItemGLB, createPlaceholderItem, defaultManifest, loadSceneryModel, normalize } from './items.js';
 import { buildCustomer, setMood, buildApprentice } from './customers.js';
 import { sfx, startMusic, stopMusic, toggleMute, setMuted, isMuted } from './audio.js';
 import { initMaker } from './maker.js';
@@ -67,6 +67,22 @@ function placeOnShelf(item, idx) {
   label.position.set(slots[idx].x, slots[idx].y - 0.12, slots[idx].z + 0.58);
   scene.add(label);
   shelf[idx] = { item, group, label, baseY: slots[idx].y, phase: Math.random() * 6 };
+}
+
+function replaceShelfMesh(idx, item) {
+  const old = shelf[idx];
+  if (!old) { placeOnShelf(item, idx); return; }
+  scene.remove(old.group); scene.remove(old.label);
+  const group = item.template.clone(true);
+  group.position.copy(slots[idx]);
+  group.rotation.y = old.group.rotation.y;
+  group.userData.slot = idx;
+  group.traverse((o) => { o.userData.slot = idx; });
+  scene.add(group);
+  const label = labelSprite(item.name, naira(item.price), item.isPlaceholder);
+  label.position.set(slots[idx].x, slots[idx].y - 0.12, slots[idx].z + 0.58);
+  scene.add(label);
+  shelf[idx] = { item, group, label, baseY: slots[idx].y, phase: old.phase, bounce: 0.25 };
 }
 
 function restockShelf() {
@@ -154,7 +170,7 @@ function spawnCustomer() {
   const type = pickType(vip);
   const mesh = buildCustomer({ vip, type });
   const fromLeft = SPOTS[spot].x < 0 || (SPOTS[spot].x === 0 && Math.random() < 0.5);
-  const start = new THREE.Vector3(fromLeft ? -16 : 16, 0, -1.6);
+  const start = new THREE.Vector3(fromLeft ? -8.2 : 8.2, 0, -1.6);
   mesh.position.copy(start); scene.add(mesh);
   const p = G.time / currentLevel.duration;
   let maxPat = (vip ? currentLevel.patience.vip : currentLevel.patience.base) - currentLevel.patience.decay * (1 - p);
@@ -170,7 +186,7 @@ function spawnCustomer() {
   el.querySelector('.want').textContent = `${item.name}${vip ? ' · pays x2' : haggle ? ' · wan haggle' : ''}`;
   el.style.display = 'none';
   $('bubbles').appendChild(el);
-  const c = { mesh, spot, item, vip, type, haggle, haggled: false, state: 'walkin', t: 0, from: start, to: SPOTS[spot].clone(), patience: maxPat, maxPat, el, exit: new THREE.Vector3(fromLeft ? 16 : -16, 0, -1.6) };
+  const c = { mesh, spot, item, vip, type, haggle, haggled: false, state: 'walkin', t: 0, from: start, to: SPOTS[spot].clone(), patience: maxPat, maxPat, el, exit: new THREE.Vector3(fromLeft ? 9.5 : -9.5, 0, -1.6) };
   customers.push(c);
   if (vip) { sfx.vip(); toast(pick(VIP_LINES)); } else sfx.arrive();
 }
@@ -189,7 +205,7 @@ function updateCustomers(dt) {
     const head = c.mesh.position.clone().add(new THREE.Vector3(0, 2.15 * c.mesh.scale.y, 0));
     if (c.state === 'walkin') {
       const lane = new THREE.Vector3(c.to.x, 0, -1.6);
-      const k1 = Math.min(1, c.t / 0.9), k2 = Math.max(0, Math.min(1, (c.t - 0.9) / 0.3));
+      const k1 = Math.min(1, c.t / 0.5), k2 = Math.max(0, Math.min(1, (c.t - 0.5) / 0.25));
       if (k2 <= 0) c.mesh.position.lerpVectors(c.from, lane, 1 - Math.pow(1 - k1, 2));
       else c.mesh.position.lerpVectors(lane, c.to, k2);
       c.mesh.position.y = Math.abs(Math.sin(c.t * 14)) * 0.08;
@@ -392,13 +408,14 @@ function startRound(levelArg) {
   sfx.unlock(); clearCustomers();
   applyWorld();
   restockShelf();
-  Object.assign(G, { playing: true, paused: false, time: currentLevel.duration, cash: 0, combo: 0, best: 0, served: 0, vexed: 0, rep: MAX_REP, spawnIn: 0.6, rush: false, levelId: currentLevel.id });
+  Object.assign(G, { playing: true, paused: false, time: currentLevel.duration, cash: 0, combo: 0, best: 0, served: 0, vexed: 0, rep: MAX_REP, spawnIn: 0.2, rush: false, levelId: currentLevel.id });
   apprenticeIn = 6;
   hideScreens();
   $('hud').classList.remove('hidden'); $('hint').classList.remove('hidden');
   updateHUD();
   if (!progress.muted) startMusic();
   toast(`${currentLevel.name} don open! Serve dem quick quick!`);
+  hydrateGLBModels();
 }
 
 function starString(n) { return '★'.repeat(n) + '☆'.repeat(3 - n); }
@@ -524,7 +541,7 @@ function renderShop() {
 // ---------- main loop ----------
 const clock = new THREE.Clock(); let elapsed = 0;
 function loop() {
-  const dt = Math.min(0.05, clock.getDelta()); elapsed += dt;
+  const dt = Math.min(0.1, clock.getDelta()); elapsed += dt;
   tickGame(dt);
   updateCustomers(dt);
   updateFlights(dt);
@@ -548,36 +565,100 @@ function loop() {
   requestAnimationFrame(loop);
 }
 
+let hydrating = false;
+async function hydrateGLBModels() {
+  if (hydrating) return;
+  hydrating = true;
+  let luxCount = 0;
+  const levelOrder = [currentLevel.id, ...LEVELS.map((l) => l.id).filter((id) => id !== currentLevel.id)];
+  for (const levelId of levelOrder) {
+    const cat = catalogs[levelId];
+    if (!cat) continue;
+    for (const item of cat) {
+      if (!item.isPlaceholder || !item.rawItem?.glb) {
+        if (!item.isPlaceholder) luxCount++;
+        continue;
+      }
+      try {
+        const obj = await loadItemGLB(item.rawItem, ITEM_SIZE, 8000);
+        if (obj) {
+          item.template = obj;
+          item.isPlaceholder = false;
+          item.source = 'lux3d';
+          luxCount++;
+          const slotIdx = shelf.findIndex((s) => s && s.item.id === item.id);
+          if (slotIdx >= 0) {
+            replaceShelfMesh(slotIdx, item);
+          }
+          if ($('asset-status')) {
+            $('asset-status').textContent = `✨ ${luxCount}/36 Lux3D models active · Market fully stocked!`;
+          }
+        }
+      } catch (err) {
+        console.warn(`GLB load skipped for ${item.name}:`, err.message || err);
+      }
+    }
+  }
+  if ($('asset-status')) {
+    $('asset-status').textContent = `✨ All ${luxCount} Lux3D models active across 3 markets!`;
+  }
+  hydrating = false;
+}
+
 async function boot() {
   setMuted(!!progress.muted);
   $('btn-mute').textContent = progress.muted ? '🔇' : '🔊';
-  let manifest;
-  try { manifest = await loadManifest(); } catch (e) { $('asset-status').textContent = 'Could not load assets/manifest.json'; return; }
+
+  let manifest = defaultManifest;
+  try {
+    const fetched = await loadManifest();
+    if (fetched && fetched.levels) manifest = fetched;
+  } catch (_) { /* use bundled manifest */ }
+
   const groups = manifest.levels && manifest.levels.length
     ? manifest.levels
     : [{ id: 'stall', items: manifest.items || [], scenery: manifest.scenery || [] }];
-  let lux = 0, total = 0, ph = 0;
+
+  let total = 0;
   for (const g of groups) {
-    const results = await Promise.all((g.items || []).map((it) => loadItemModel(it, ITEM_SIZE).then((r) => ({ it, ...r }))));
-    catalogs[g.id] = results.map(({ it, object, isPlaceholder }) => {
-      total++; if (isPlaceholder) ph++; else lux++;
-      return { id: it.id, name: it.name, price: it.price, requests: it.requests, template: object, isPlaceholder, fresh: false, source: isPlaceholder ? 'placeholder' : 'lux3d', levelId: g.id };
+    catalogs[g.id] = (g.items || []).map((it) => {
+      total++;
+      const ph = createPlaceholderItem(it, ITEM_SIZE);
+      return {
+        id: it.id,
+        name: it.name,
+        price: it.price,
+        requests: it.requests,
+        template: ph.object,
+        isPlaceholder: true,
+        fresh: false,
+        source: 'placeholder',
+        levelId: g.id,
+        rawItem: it,
+      };
     });
   }
-  sceneryLux = 0;
-  const scenery = (manifest.levels ? manifest.levels.flatMap((l) => l.scenery || []) : manifest.scenery) || [];
-  await Promise.all(scenery.map(async (s) => {
-    const obj = await loadSceneryModel(s); if (!obj) return;
-    sceneryLux++; obj.position.fromArray(s.position); obj.rotation.y = s.rotationY || 0; scene.add(obj);
-  }));
-  if (sceneryLux) world.fallbackScenery.children.slice(0, sceneryLux).forEach((c) => (c.visible = false));
-  $('asset-status').textContent = `${total} items across ${groups.length} markets: ${lux} Lux3D model${lux === 1 ? '' : 's'}, ${ph} placeholder${ph === 1 ? '' : 's'}.`;
+
   applyWorld();
   restockShelf();
   renderLevelSelect();
   renderShop();
   updateBankLabels();
-  window.__nmr = { G, catalogs, get catalog() { return activeCatalog(); }, shelf, customers, serve, startRound, spawnCustomer, endRound, progress, LEVELS, openLevels, openShop, beginHaggle, lockHaggle, offerAt, needleT, buyUpgrade: (id) => { const r = buyUpgrade(progress, id); if (r.ok) { applyWorld(); renderShop(); updateBankLabels(); } return r; }, setProgress(p) { progress = p; saveProgress(p); applyWorld(); renderLevelSelect(); renderShop(); updateBankLabels(); }, unlockAll() { LEVELS.forEach((l) => { if ((progress.stars[l.id] || 0) < 1) progress.stars[l.id] = 1; }); saveProgress(progress); renderLevelSelect(); updateBankLabels(); }, grantBank(n) { progress.bank += n; saveProgress(progress); renderShop(); updateBankLabels(); }, saveProgress, isUnlocked, starsEarned, currentLevel: () => currentLevel, restockShelf, applyWorld };
+
+  $('asset-status').textContent = `✨ Market ready! ${total} items stocked across ${groups.length} markets.`;
+
+  window.__nmr = {
+    G, catalogs, get catalog() { return activeCatalog(); }, shelf, customers,
+    serve, startRound, spawnCustomer, endRound, progress, LEVELS, openLevels, openShop,
+    beginHaggle, lockHaggle, offerAt, needleT,
+    buyUpgrade: (id) => { const r = buyUpgrade(progress, id); if (r.ok) { applyWorld(); renderShop(); updateBankLabels(); } return r; },
+    setProgress(p) { progress = p; saveProgress(p); applyWorld(); renderLevelSelect(); renderShop(); updateBankLabels(); },
+    unlockAll() { LEVELS.forEach((l) => { if ((progress.stars[l.id] || 0) < 1) progress.stars[l.id] = 1; }); saveProgress(progress); renderLevelSelect(); updateBankLabels(); },
+    grantBank(n) { progress.bank += n; saveProgress(progress); renderShop(); updateBankLabels(); },
+    saveProgress, isUnlocked, starsEarned, currentLevel: () => currentLevel, restockShelf, applyWorld, hydrateGLBModels,
+  };
+
+  hydrateGLBModels();
 }
 
 $('btn-markets').onclick = openLevels;

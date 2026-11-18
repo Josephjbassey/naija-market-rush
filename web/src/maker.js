@@ -18,6 +18,12 @@ export function initMaker({ onOpen, onClose, onItem, buttons }) {
     if (fields) fields.classList.toggle('hidden', !on);
   }
 
+  function activateTab(name) {
+    document.querySelectorAll('.tab').forEach((x) => x.classList.toggle('active', x.dataset.tab === name));
+    $('tab-lux').classList.toggle('hidden', name !== 'lux');
+    $('tab-import').classList.toggle('hidden', name !== 'import');
+  }
+
   async function checkBackend() {
     const st = $('lux-status');
     try {
@@ -28,11 +34,13 @@ export function initMaker({ onOpen, onClose, onItem, buttons }) {
         st.textContent = j.mock ? '🧪 Backend in MOCK mode (no real Lux3D calls).' : '🟢 Lux3D backend connected. Generation takes a few minutes.';
       } else if (j) {
         setGenerateAvailable(false);
-        st.textContent = 'Live generation available in local/server build.';
+        st.textContent = 'Live generation available in local/server build. Use the Import tab to drop your own .glb!';
+        activateTab('import');
       } else throw new Error();
     } catch {
       setGenerateAvailable(false);
-      st.textContent = 'Live generation available in local/server build.';
+      st.textContent = 'Live generation available in local/server build. Use the Import tab to drop your own .glb!';
+      activateTab('import');
     }
   }
 
@@ -41,11 +49,7 @@ export function initMaker({ onOpen, onClose, onItem, buttons }) {
   buttons.forEach((b) => b && (b.onclick = open));
   $('maker-close').onclick = close;
 
-  document.querySelectorAll('.tab').forEach((t) => (t.onclick = () => {
-    document.querySelectorAll('.tab').forEach((x) => x.classList.toggle('active', x === t));
-    $('tab-lux').classList.toggle('hidden', t.dataset.tab !== 'lux');
-    $('tab-import').classList.toggle('hidden', t.dataset.tab !== 'import');
-  }));
+  document.querySelectorAll('.tab').forEach((t) => (t.onclick = () => activateTab(t.dataset.tab)));
 
   const meta = (p) => ({
     name: ($(`${p}-name`).value || '').trim() || 'Mystery item',
